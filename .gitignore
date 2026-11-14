@@ -42,3 +42,7 @@ next-env.d.ts
 
 # local brainstorm and plan workspace
 .superpowers/
+
+# private notes and copy rules, kept local only
+docs/superpowers/
+tests/unit/private/
