@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Pranav Lande · Portfolio
 
-## Getting Started
+Personal site of Pranav Lande, full-stack and AI developer in Mumbai.
 
-First, run the development server:
+- **Frontend:** Next.js (App Router, JavaScript), Tailwind CSS, three.js, Lenis
+- **Backend:** FastAPI + PostgreSQL in `backend/`, used by the contact form
+
+## Run locally
 
 ```bash
+# site, http://localhost:3000
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# backend, http://localhost:8000 (see backend/README.md for the .env setup)
+cd backend
+uv sync
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+| Variable | Where | Purpose |
+|---|---|---|
+| `NEXT_PUBLIC_SITE_URL` | site | Public site address for canonical links, sitemap and share images |
+| `NEXT_PUBLIC_API_URL` | site | Backend address, defaults to `http://localhost:8000` |
+| `backend/.env` | backend | Database, allowed origins and email settings (copy `backend/.env.example`) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tests
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm test               # unit tests
+npm run test:e2e       # browser tests
+cd backend && uv run pytest
+```
