@@ -1,9 +1,10 @@
-// Root layout: fonts, page metadata and the shell shared by every page (intro, header, footer, smooth scroll)
+// Root layout: fonts, page metadata and the shell shared by every page (intro, header, footer, smooth scroll, gray cat)
 import { Host_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import HelloLoader from "@/components/layout/HelloLoader";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SmoothScrollProvider from "@/components/layout/SmoothScrollProvider";
+import GrayCatOverlay from "@/components/cat/GrayCatOverlay";
 import "./globals.css";
 
 const hostGrotesk = Host_Grotesk({ variable: "--font-host-grotesk", subsets: ["latin"] });
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
           <SiteHeader />
           {children}
           <SiteFooter />
+          <GrayCatOverlay />
         </SmoothScrollProvider>
       </body>
     </html>
