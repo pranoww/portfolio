@@ -1,4 +1,4 @@
-# FastAPI app for the portfolio: opens the database on startup and lets the site call /contact
+# FastAPI app for the portfolio: opens the database on startup and serves everything under /api, matching the Vercel route
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -23,9 +23,9 @@ app.add_middleware(
     allow_methods=["POST"],
     allow_headers=["Content-Type"],
 )
-app.include_router(contact_router)
+app.include_router(contact_router, prefix="/api")
 
 
-@app.get("/health")
+@app.get("/api/health")
 def read_health():
     return {"status": "ok"}

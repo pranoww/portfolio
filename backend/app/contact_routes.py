@@ -16,7 +16,9 @@ def create_contact_message(contact_message: ContactMessage, request: Request):
     if contact_message.website:
         return {"status": "received"}
 
-    sender_ip = request.client.host if request.client else "unknown"
+    # On Vercel the visitor's address arrives in a header Vercel sets itself; elsewhere use the direct connection
+    vercel_forwarded_ip = request.headers.get("x-vercel-forwarded-for", "").split(",")[0].strip()
+    sender_ip = (settings.vercel and vercel_forwarded_ip) or (request.client.host if request.client else "unknown")
     sender_ip_hash = hashlib.sha256(f"{settings.ip_hash_salt}{sender_ip}".encode()).hexdigest()
 
     with connection_pool.connection() as connection:

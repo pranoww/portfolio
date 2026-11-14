@@ -1,6 +1,6 @@
 # Portfolio backend
 
-FastAPI + Postgres. It does one job: `POST /contact` takes a message from the site's contact form. The endpoint:
+FastAPI + Postgres. It does one job: `POST /api/contact` takes a message from the site's contact form (all routes live under `/api`, matching the Vercel route). The endpoint:
 
 - checks name, email and message with the same rules as the form
 - quietly drops bots that fill the hidden `website` field
@@ -19,6 +19,6 @@ uv run uvicorn app.main:app --reload --port 8000
 uv run pytest
 ```
 
-The site reads the API address from `NEXT_PUBLIC_API_URL` and falls back to `http://localhost:8000`.
+The site reads the API address from `NEXT_PUBLIC_API_URL` and falls back to `http://localhost:8000/api`. On Vercel set it to `/api`.
 
-When the API runs behind a proxy, start uvicorn with `--proxy-headers --forwarded-allow-ips="*"` so the rate limit sees each visitor's real IP.
+On Vercel the visitor's address comes from the `x-vercel-forwarded-for` header (used only when Vercel's own `VERCEL` variable is set). On another host behind a proxy, start uvicorn with `--proxy-headers --forwarded-allow-ips="*"` so the rate limit sees each visitor's real IP.

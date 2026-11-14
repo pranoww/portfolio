@@ -17,7 +17,7 @@ CREATE INDEX IF NOT EXISTS contact_messages_sender_ip_hash_created_at_index
     ON contact_messages (sender_ip_hash, created_at);
 """
 
-connection_pool = ConnectionPool(settings.database_url, open=False)
+connection_pool = ConnectionPool(settings.database_url, min_size=1, max_size=4, open=False)
 
 
 def open_database():

@@ -52,7 +52,7 @@ Hand-built with Next.js and three.js, backed by a small FastAPI + PostgreSQL ser
 ```
 Browser ── Next.js site (static pages, three.js scenes)
               │
-              │ POST /contact  (JSON, CORS-limited to the site's origin)
+              │ POST /api/contact  (same domain on Vercel)
               ▼
           FastAPI service ── validates, drops honeypot bots, rate-limits per visitor
               │
@@ -88,7 +88,7 @@ Browser ── Next.js site (static pages, three.js scenes)
 npm install
 npm run dev
 
-# 2. Backend, http://localhost:8000
+# 2. Backend, http://localhost:8000/api
 cd backend
 cp .env.example .env      # fill in the database URL and other values
 createdb portfolio        # plus portfolio_test for the backend tests
@@ -103,7 +103,7 @@ The contact form works once both are running. See [`backend/README.md`](backend/
 | Variable | Used by | Purpose |
 |---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | site | Public address for canonical links, sitemap and share images |
-| `NEXT_PUBLIC_API_URL` | site | Backend address (defaults to `http://localhost:8000`) |
+| `NEXT_PUBLIC_API_URL` | site | Backend address: `/api` on Vercel, defaults to `http://localhost:8000/api` locally |
 | `DATABASE_URL` / `TEST_DATABASE_URL` | backend | PostgreSQL connections for the app and its tests |
 | `ALLOWED_ORIGINS` | backend | Sites allowed to call the API, as a JSON list |
 | `IP_HASH_SALT` | backend | Salt for hashing visitor IPs used in rate limiting |
@@ -123,8 +123,14 @@ The contact form works once both are running. See [`backend/README.md`](backend/
 
 ## Deployment
 
-- **Site:** any Next.js host (Vercel works out of the box). Set `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_API_URL`.
-- **Backend:** any host that runs Python and PostgreSQL. Behind a proxy, start uvicorn with `--proxy-headers --forwarded-allow-ips="*"` so rate limiting sees real visitor IPs, and add the site's address to `ALLOWED_ORIGINS`.
+The repo deploys to **Vercel as one project with two services** (see [`vercel.json`](vercel.json)): the Next.js site at `/` and the FastAPI backend at `/api`, on the same domain.
+
+1. Import the repo in Vercel; it reads `vercel.json` and builds both services.
+2. Add a PostgreSQL database (for example Neon from Vercel's Storage tab) and connect it, so `DATABASE_URL` is set. The table is created on first start.
+3. Set environment variables: `IP_HASH_SALT`, `NEXT_PUBLIC_API_URL=/api`, `NEXT_PUBLIC_SITE_URL=https://<your domain>`, and optionally the `RESEND_*` email settings.
+4. Deploy. On Vercel the backend reads the visitor's address from Vercel's `x-vercel-forwarded-for` header for rate limiting.
+
+Hosting the backend elsewhere also works: point `NEXT_PUBLIC_API_URL` at it, add the site's address to `ALLOWED_ORIGINS`, and behind a proxy start uvicorn with `--proxy-headers --forwarded-allow-ips="*"`.
 
 ## Contact
 

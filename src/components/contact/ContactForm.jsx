@@ -5,7 +5,7 @@ import PillButton from "@/components/ui/PillButton";
 import { contact, profile } from "@/content/siteContent";
 import { canPlayPaperPlaneSend, playPaperPlaneSend } from "@/three/paperPlaneSend";
 
-const contactApiUrl = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/contact`;
+const contactApiUrl = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api"}/contact`;
 const sendFailedMessage = "Sorry, that didn’t go through. Please try again or email me directly.";
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 

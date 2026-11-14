@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     contact_from_email: str = "Portfolio <onboarding@resend.dev>"
     contact_inbox_email: str = ""
+    vercel: bool = False
 
 
 settings = Settings()
