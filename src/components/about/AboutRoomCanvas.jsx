@@ -161,6 +161,7 @@ export default function AboutRoomCanvas() {
         if (isVisible) animationFrameId = requestAnimationFrame(renderFrame);
       }
 
+      renderFrame(previousTime);
       const visibilityObserver = new IntersectionObserver(([entry]) => {
         isVisible = entry.isIntersecting;
         cancelAnimationFrame(animationFrameId);
