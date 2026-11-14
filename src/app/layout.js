@@ -5,7 +5,7 @@ import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SmoothScrollProvider from "@/components/layout/SmoothScrollProvider";
 import GrayCatOverlay from "@/components/cat/GrayCatOverlay";
-import { personStructuredData, seo, siteUrl } from "@/content/siteMetadata";
+import { googleSiteVerification, personStructuredData, seo, siteUrl } from "@/content/siteMetadata";
 import "./globals.css";
 
 const hostGrotesk = Host_Grotesk({ variable: "--font-host-grotesk", subsets: ["latin"] });
@@ -25,6 +25,7 @@ export const metadata = {
   openGraph: { type: "profile", url: "/", siteName: seo.shortTitle, title: seo.title, description: seo.description, firstName: "Pranav", lastName: "Lande", locale: "en_IN" },
   twitter: { card: "summary_large_image", title: seo.title, description: seo.description },
   robots: { index: true, follow: true },
+  verification: { google: googleSiteVerification },
 };
 
 export const viewport = { themeColor: "#f0f1fa" };

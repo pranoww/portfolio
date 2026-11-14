@@ -3,6 +3,8 @@ import { profile } from "@/content/siteContent";
 
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+export const googleSiteVerification = "9IsWTBhIEmKFiUOM7JXb1C_lnofZ5MZCTj0HqCi2WD8";
+
 export const seo = {
   title: "Pranav Lande · Full-stack and AI developer in Mumbai",
   shortTitle: "Pranav Lande",
