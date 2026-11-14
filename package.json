@@ -1,6 +1,12 @@
 {
   "name": "pranav-portfolio",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Personal portfolio of Pranav Lande, full-stack and AI developer: Next.js, three.js and a FastAPI + PostgreSQL contact backend.",
+  "author": "Pranav Lande (https://github.com/pranoww)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pranoww/portfolio.git"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -29,5 +35,8 @@
     "jsdom": "29.1.1",
     "tailwindcss": "4.3.3",
     "vitest": "5.1.0"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   }
 }
