@@ -79,6 +79,24 @@ export const buildItemList = [
   { number: "04", demo: "speed", title: "Speed and search", description: "The quiet fixes that make a page open fast and get found on Google.", proofPrefix: "Done at", proofList: ["One Health Assist"], stackLine: "Lighthouse · Core Web Vitals" },
 ];
 
+export const responsiveAppExample = {
+  address: "localhost:3000/applications",
+  appName: "Tracker",
+  navigationItemList: ["Overview", "Jobs", "Calendar", "Settings"],
+  heading: "Applications",
+  statList: [
+    { label: "Applied", value: "48" },
+    { label: "Interviews", value: "6" },
+    { label: "Offers", value: "1" },
+  ],
+  rowList: [
+    { company: "Northwind", role: "Frontend developer", date: "12 Nov", status: "Interview" },
+    { company: "Lumen Labs", role: "Full-stack engineer", date: "10 Nov", status: "Applied" },
+    { company: "Kite and Co", role: "React developer", date: "7 Nov", status: "Offer" },
+    { company: "Harbor", role: "Python developer", date: "3 Nov", status: "Applied" },
+  ],
+};
+
 export const apiRequestList = [
   { method: "POST", path: "/auth/otp/verify", status: 200, duration: "41ms" },
   { method: "GET", path: "/scores/pillars", status: 200, duration: "18ms" },

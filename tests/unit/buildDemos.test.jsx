@@ -1,9 +1,10 @@
 import { render, screen, act } from '@testing-library/react';
+import ResponsiveBrowserDemo from '@/components/build/ResponsiveBrowserDemo';
 import ApiRequestLogDemo from '@/components/build/ApiRequestLogDemo';
 import AiChatDemo from '@/components/build/AiChatDemo';
 import SpeedChecklistDemo from '@/components/build/SpeedChecklistDemo';
 import WhatIBuildSection from '@/components/build/WhatIBuildSection';
-import { aiChatExample, buildItemList } from '@/content/siteContent';
+import { aiChatExample, buildItemList, responsiveAppExample } from '@/content/siteContent';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -51,4 +52,11 @@ test('speed checklist ticks items off in order', () => {
 test('section lists all four things with their titles', () => {
   render(<WhatIBuildSection />);
   buildItemList.forEach(item => expect(screen.getAllByText(item.title).length).toBeGreaterThan(0));
+});
+
+test('web demo shows a real app with its rows, not empty placeholder blocks', () => {
+  render(<ResponsiveBrowserDemo isActive />);
+  expect(screen.getByText(responsiveAppExample.heading)).toBeInTheDocument();
+  expect(screen.getAllByTestId('app-row')).toHaveLength(responsiveAppExample.rowList.length);
+  expect(screen.getByText(responsiveAppExample.rowList[0].role)).toBeInTheDocument();
 });
