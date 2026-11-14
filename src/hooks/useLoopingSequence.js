@@ -6,19 +6,18 @@ export default function useLoopingSequence(isActive, stepCount, { startDelay, st
   const [shownStepCount, setShownStepCount] = useState(0);
 
   useEffect(() => {
-    if (!isActive) {
-      setShownStepCount(0);
-      return;
-    }
+    if (!isActive) return;
     let sequenceTimer;
     function playStep(stepNumber) {
       setShownStepCount(stepNumber);
       if (stepNumber < stepCount) sequenceTimer = setTimeout(() => playStep(stepNumber + 1), stepDelay);
       else sequenceTimer = setTimeout(() => playStep(0), pauseAfterLastStep);
     }
-    setShownStepCount(0);
     sequenceTimer = setTimeout(() => playStep(1), startDelay);
-    return () => clearTimeout(sequenceTimer);
+    return () => {
+      clearTimeout(sequenceTimer);
+      setShownStepCount(0);
+    };
   }, [isActive, stepCount, startDelay, stepDelay, pauseAfterLastStep]);
 
   return shownStepCount;

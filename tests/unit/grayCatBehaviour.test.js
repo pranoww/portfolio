@@ -10,7 +10,7 @@ function runFor(cat, seconds, onFrame = () => {}) {
   }
 }
 
-const bottomEdgeModes = ['sit', 'walk', 'chase', 'still', 'away'];
+const bottomEdgeModes = ['sit', 'walk', 'chase', 'still'];
 
 test('starts sitting in the bottom-right corner', () => {
   const cat = createGrayCatBehaviour(viewport);

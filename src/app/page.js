@@ -4,6 +4,7 @@ import SelectedWorkSection from "@/components/work/SelectedWorkSection";
 import StatementBand from "@/components/band/StatementBand";
 import WhatIBuildSection from "@/components/build/WhatIBuildSection";
 import ExperienceSection from "@/components/experience/ExperienceSection";
+import AboutSection from "@/components/about/AboutSection";
 import ContactSection from "@/components/contact/ContactSection";
 
 export default function HomePage() {
@@ -14,6 +15,7 @@ export default function HomePage() {
       <StatementBand />
       <WhatIBuildSection />
       <ExperienceSection />
+      <AboutSection />
       <ContactSection />
     </main>
   );
