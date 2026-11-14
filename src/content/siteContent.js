@@ -24,13 +24,20 @@ export const helloWords = ["Hello", "नमस्ते", "नमस्कार
 
 export const hero = {
   headline: "I build web apps and AI tools people enjoy using.",
+  highlightedWord: "enjoy",
   intro: "I'm Pranav, a full-stack developer at One Health Assist in Mumbai. I work across Next.js front ends, FastAPI back ends and the Postgres underneath, and lately a lot of LLM work.",
-  cardDetails: [
-    { label: "Now", value: "Full-stack developer, One Health Assist" },
-    { label: "Stack", value: "Python, FastAPI, Next.js, PostgreSQL" },
-    { label: "Also", value: "LLM apps, RAG, LangGraph" },
-  ],
-  cardHint: "Click the card to flip it. A gray cat also wanders around this page.",
+  cardCode: {
+    fileName: "pranav.py",
+    variableName: "pranav",
+    entryList: [
+      { key: "role", value: "full-stack developer" },
+      { key: "city", value: "Mumbai" },
+      { key: "works_at", value: "One Health Assist" },
+      { key: "loves", value: ["FastAPI", "Next.js"] },
+      { key: "learning", value: "LangGraph" },
+      { key: "has_cat", value: true },
+    ],
+  },
 };
 
 export const selectedWork = {
@@ -73,10 +80,10 @@ export const statementBand = {
 };
 
 export const buildItemList = [
-  { number: "01", demo: "web", title: "Websites and web apps", description: "Layouts that hold up on every screen, from a wide monitor down to a phone.", proofPrefix: "Shipped in", proofList: ["PreventX", "Health Locker", "jobscout"], stackLine: "Next.js · React · Tailwind" },
-  { number: "02", demo: "api", title: "Backends and APIs", description: "Clean data models, OTP login and role-based access that says no when it should.", proofPrefix: "Shipped in", proofList: ["OHA Admin", "Health Score"], stackLine: "FastAPI · SQLAlchemy · Postgres" },
-  { number: "03", demo: "ai", title: "AI features", description: "Assistants that answer from real knowledge and stay inside safe limits.", proofPrefix: "Shipped in", proofList: ["Skin Care AI"], stackLine: "Gemini · RAG · Voice" },
-  { number: "04", demo: "speed", title: "Speed and search", description: "The quiet fixes that make a page open fast and get found on Google.", proofPrefix: "Done at", proofList: ["One Health Assist"], stackLine: "Lighthouse · Core Web Vitals" },
+  { number: "01", demo: "web", title: "Websites and web apps", description: "Layouts that hold up on every screen, from a wide monitor down to a phone.", proofPrefix: "Shipped in", proofList: ["PreventX", "Health Locker", "jobscout"], stackLine: "Next.js · React · Tailwind CSS · Node.js" },
+  { number: "02", demo: "api", title: "Backends and APIs", description: "Clean data models, OTP login and role-based access that says no when it should.", proofPrefix: "Shipped in", proofList: ["OHA Admin", "Health Score"], stackLine: "Python · FastAPI · Flask · SQLAlchemy · Pydantic · PostgreSQL · MySQL · MongoDB · Docker" },
+  { number: "03", demo: "ai", title: "AI features", description: "Assistants that answer from real knowledge and stay inside safe limits.", proofPrefix: "Shipped in", proofList: ["Skin Care AI"], stackLine: "Gemini · RAG · LangChain · LangGraph · Vector databases · Voice" },
+  { number: "04", demo: "speed", title: "Speed and search", description: "The quiet fixes that make a page open fast and get found on Google.", proofPrefix: "Done at", proofList: ["One Health Assist"], stackLine: "Lighthouse · Core Web Vitals · SEO · Datadog" },
 ];
 
 export const responsiveAppExample = {
@@ -160,14 +167,6 @@ export const roomObjectList = [
   { label: "Cat bed", title: "Usually occupied", text: "The gray cat is somewhere else on this page right now. Try the bottom-right corner." },
 ];
 
-export const skillGroupList = [
-  { title: "Frontend", itemList: ["Next.js, React", "Tailwind CSS", "HTML, CSS"] },
-  { title: "Backend", itemList: ["Python, FastAPI, Flask", "SQLAlchemy, Pydantic", "Node.js"] },
-  { title: "Data", itemList: ["PostgreSQL, MySQL", "MongoDB", "Pandas, Power BI"] },
-  { title: "AI", itemList: ["LLM apps, RAG", "Vector databases", "LangChain, LangGraph"] },
-  { title: "Quality", itemList: ["Lighthouse, Core Web Vitals", "SEO", "Datadog"] },
-  { title: "Tools", itemList: ["Git, Docker", "Alembic, Uvicorn", "DBeaver"] },
-];
 
 export const contact = {
   title: "Got something to build?",

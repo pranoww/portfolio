@@ -7,7 +7,23 @@ const cardFaceClassName =
   "absolute inset-0 flex flex-col overflow-hidden rounded-[20px] p-5 text-white backface-hidden shadow-[0_30px_60px_-20px_rgba(26,47,251,.45),0_10px_20px_-10px_rgba(0,0,0,.25)] sm:p-[30px] " +
   "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:mix-blend-soft-light after:bg-[radial-gradient(320px_circle_at_var(--shine-x,30%)_var(--shine-y,20%),rgba(255,255,255,.55),transparent_55%)]";
 
-const mumbaiTimeFormat = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: profile.timeZone });
+const quotedString = text => <span className="text-lime">&quot;{text}&quot;</span>;
+
+const codeValueByType = {
+  string: value => quotedString(value),
+  boolean: value => <span className="text-[#8fa0ff]">{value ? "True" : "False"}</span>,
+  object: value => <>[{value.map((item, index) => <span key={item}>{index > 0 && ", "}{quotedString(item)}</span>)}]</>,
+};
+
+const codeLineList = [
+  <><span className="text-white">{hero.cardCode.variableName}</span> = {"{"}</>,
+  ...hero.cardCode.entryList.map(entry => (
+    <>{"  "}<span className="text-[#dfe3ff]">&quot;{entry.key}&quot;</span>: {codeValueByType[typeof entry.value](entry.value)},</>
+  )),
+  "}",
+];
+
+const mumbaiTimeFormat =new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: profile.timeZone });
 
 export default function BusinessCard() {
   const cardRef = useRef(null);
@@ -80,15 +96,23 @@ export default function BusinessCard() {
             </div>
           </div>
 
-          <div className={`${cardFaceClassName} rotate-y-180 bg-ink`}>
-            <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-[18px] gap-y-4 text-[15px] sm:gap-y-[18px] sm:text-base">
-              {hero.cardDetails.map(detail => (
-                <div key={detail.label} className="contents">
-                  <dt className="pt-[3px] font-mono text-xs text-lime">{detail.label}</dt>
-                  <dd className="text-line">{detail.value}</dd>
-                </div>
+          <div className={`${cardFaceClassName} rotate-y-180 bg-[radial-gradient(110%_80%_at_100%_100%,#2236ff_0%,#111a6b_38%,#070a1f_78%)]`}>
+            <div className="flex items-center gap-3 border-b border-white/10 pb-3">
+              <span aria-hidden="true" className="flex gap-1.5">
+                {["bg-[#ff5f57]", "bg-[#febc2e]", "bg-lime"].map(dotColor => <i key={dotColor} className={`size-2.5 rounded-full ${dotColor}`} />)}
+              </span>
+              <p className="flex items-center gap-2 rounded-md bg-white/[.08] px-2.5 py-1 font-mono text-xs text-white/85">
+                <span aria-hidden="true" className="font-bold text-[#8fa0ff]">py</span>{hero.cardCode.fileName}
+              </p>
+            </div>
+            <pre className="mt-4 font-mono text-[12px] leading-[1.9] text-white/45 sm:text-[13px]">
+              {codeLineList.map((codeLine, index) => (
+                <span key={index} className="block">
+                  <span aria-hidden="true" className="inline-block w-7 select-none text-white/25">{index + 1}</span>{codeLine}
+                  {index === codeLineList.length - 1 && <span aria-hidden="true" className="ml-0.5 inline-block h-[1.1em] w-[2px] animate-[caret-blink_1s_steps(1)_infinite] bg-lime align-middle" />}
+                </span>
               ))}
-            </dl>
+            </pre>
             <div className="mt-auto flex flex-wrap gap-2">
               {[
                 { label: "GitHub", href: profile.githubUrl },
@@ -106,10 +130,13 @@ export default function BusinessCard() {
                 </a>
               ))}
             </div>
+            <p aria-hidden="true" className="-mx-5 -mb-5 mt-4 flex justify-between bg-blue px-5 py-1.5 font-mono text-[10px] text-white/85 sm:-mx-[30px] sm:-mb-[30px] sm:px-[30px]">
+              <span>⎇ main</span>
+              <span>Python · Ln {codeLineList.length}, Col 2</span>
+            </p>
           </div>
         </div>
       </div>
-      <p className="mt-3.5 text-center font-mono text-xs text-ink-2">{hero.cardHint}</p>
     </div>
   );
 }

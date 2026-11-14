@@ -36,10 +36,11 @@ export default function BuildDemoPanel({ buildItem, isDesktop, isActiveOnDesktop
       style={{ "--spotlight-color": panelStyle.spotlightColor }}
       className={`relative flex min-h-[420px] flex-col justify-end overflow-hidden rounded-[22px] p-5 sm:min-h-[460px] sm:p-[34px] md:rounded-[26px] before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(420px_circle_at_var(--spotlight-x,50%)_var(--spotlight-y,30%),var(--spotlight-color),transparent_60%)] ${panelStyle.panelClassName} ${desktopStateClassName}`}
     >
-      <span className="absolute left-5 top-5 font-mono text-xs opacity-70 sm:left-[34px] sm:top-[26px]">{buildItem.stackLine}</span>
+      {isDesktop && <span className="absolute left-[34px] top-[26px] max-w-[calc(100%-220px)] font-mono text-xs leading-relaxed opacity-70">{buildItem.stackLine}</span>}
       <span aria-hidden="true" className={`absolute right-[26px] top-3.5 font-display text-[80px] font-semibold leading-none tracking-[-0.04em] sm:text-[120px] ${panelStyle.numberOpacity}`}>{buildItem.number}</span>
       {!isDesktop && (
-        <div className="mb-auto pt-[30px]">
+        <div className="relative mb-auto">
+          <p className="mb-4 max-w-[calc(100%-110px)] font-mono text-xs leading-relaxed opacity-70 sm:max-w-[calc(100%-160px)]">{buildItem.stackLine}</p>
           <h3 className="font-display text-[26px] font-bold">{buildItem.title}</h3>
           <p className="mt-1.5 opacity-80">{buildItem.description}</p>
         </div>

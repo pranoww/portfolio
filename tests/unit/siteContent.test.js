@@ -23,3 +23,10 @@ test('contact details and links', () => {
   expect(siteContent.profile.linkedinUrl).toBe('https://www.linkedin.com/in/pranavlande');
   expect(siteContent.profile.resumePath).toBe('/resume/Pranav_Kishor_Lande_Resume.pdf');
 });
+
+test('skills live in the "What I build" stack lines instead of a separate grid', () => {
+  const allStackLines = siteContent.buildItemList.map(buildItem => buildItem.stackLine).join(' · ');
+  ['Next.js', 'React', 'Tailwind CSS', 'Node.js', 'Python', 'FastAPI', 'Flask', 'SQLAlchemy', 'Pydantic', 'PostgreSQL', 'MySQL', 'MongoDB', 'Docker', 'RAG', 'LangChain', 'LangGraph', 'Vector databases', 'Lighthouse', 'Core Web Vitals', 'SEO', 'Datadog']
+    .forEach(skill => expect(allStackLines).toContain(skill));
+  expect(siteContent.skillGroupList).toBeUndefined();
+});
