@@ -5,6 +5,8 @@
 **Personal portfolio of Pranav Lande, full-stack and AI developer in Mumbai.**
 Hand-built with Next.js and three.js, backed by a small FastAPI + PostgreSQL service.
 
+**[Live site: pranavportfolio-dev.vercel.app](https://pranavportfolio-dev.vercel.app/)**
+
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
 ![three.js](https://img.shields.io/badge/three.js-0.187-000000?logo=threedotjs&logoColor=white)

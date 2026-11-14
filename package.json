@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Personal portfolio of Pranav Lande, full-stack and AI developer: Next.js, three.js and a FastAPI + PostgreSQL contact backend.",
   "author": "Pranav Lande (https://github.com/pranoww)",
+  "homepage": "https://pranavportfolio-dev.vercel.app/",
   "repository": {
     "type": "git",
     "url": "https://github.com/pranoww/portfolio.git"
