@@ -1,24 +1,19 @@
-// "What I build": on desktop the section pins while you scroll, swapping one live demo at a time; on phones the demos stack
+// "What I build": on desktop the section pins while you scroll, swapping one live demo at a time; on phones and tablets the demos swipe sideways
 "use client";
 import { useEffect, useRef, useState } from "react";
 import BuildDemoPanel from "@/components/build/BuildDemoPanel";
+import useMediaQuery from "@/hooks/useMediaQuery";
 import { buildItemList } from "@/content/siteContent";
 
 const headerHeight = 68;
 
 export default function WhatIBuildSection() {
   const storyRef = useRef(null);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 901px)");
   const [activeIndex, setActiveIndex] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
-
-  useEffect(() => {
-    const desktopQuery = window.matchMedia("(min-width: 901px)");
-    const updateIsDesktop = () => setIsDesktop(desktopQuery.matches);
-    updateIsDesktop();
-    desktopQuery.addEventListener("change", updateIsDesktop);
-    return () => desktopQuery.removeEventListener("change", updateIsDesktop);
-  }, []);
+  const carouselRef = useRef(null);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
   useEffect(() => {
     if (!isDesktop) return;
@@ -50,13 +45,44 @@ export default function WhatIBuildSection() {
     window.scrollTo({ top: storyTop + (scrollableDistance * (index + 0.5)) / buildItemList.length, behavior: "smooth" });
   }
 
+  function slideStepWidth() {
+    const carousel = carouselRef.current;
+    return carousel.children[1].offsetLeft - carousel.children[0].offsetLeft;
+  }
+
+  function handleCarouselScroll() {
+    setActiveSlideIndex(Math.min(buildItemList.length - 1, Math.round(carouselRef.current.scrollLeft / slideStepWidth())));
+  }
+
+  function showSlide(index) {
+    carouselRef.current.scrollTo({ left: index * slideStepWidth(), behavior: "smooth" });
+  }
+
   if (!isDesktop) {
     return (
-      <section id="build" className="border-t border-line py-[88px]">
-        <div className="mx-auto max-w-[1180px] px-4 sm:px-7">
+      <section id="build" className="border-t border-line pb-0 pt-16">
+        <div className="mx-auto max-w-[1180px] px-5 sm:px-7">
           <h2 className="mb-7 font-display text-[clamp(32px,4.2vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em]">What I build</h2>
-          <div className="grid gap-[22px]">
-            {buildItemList.map(buildItem => <BuildDemoPanel key={buildItem.demo} buildItem={buildItem} isDesktop={false} />)}
+          <div
+            ref={carouselRef}
+            onScroll={handleCarouselScroll}
+            role="region"
+            aria-roledescription="carousel"
+            aria-label="What I build"
+            className="-mx-5 flex items-start snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:-mx-7 sm:scroll-px-7 sm:px-7 [&::-webkit-scrollbar]:hidden"
+          >
+            {buildItemList.map((buildItem, index) => (
+              <div key={buildItem.demo} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${buildItemList.length}: ${buildItem.title}`} className="flex w-[86%] flex-none snap-start sm:w-[68%] [&>*]:w-full">
+                <BuildDemoPanel buildItem={buildItem} isDesktop={false} />
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 flex justify-center">
+            {buildItemList.map((buildItem, index) => (
+              <button key={buildItem.demo} type="button" onClick={() => showSlide(index)} aria-label={`Show ${buildItem.title}`} aria-current={index === activeSlideIndex} className="group grid min-h-11 min-w-8 place-items-center">
+                <span className={`h-2 rounded-full transition-all duration-300 ${index === activeSlideIndex ? "w-6 bg-blue" : "w-2 bg-[#c9cbd8] group-hover:bg-ink-2"}`} />
+              </button>
+            ))}
           </div>
         </div>
       </section>

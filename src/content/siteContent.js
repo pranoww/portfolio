@@ -17,7 +17,7 @@ export const navigationLinks = [
   { label: "Work", href: "#work" },
   { label: "What I build", href: "#build" },
   { label: "Experience", href: "#experience" },
-  { label: "About", href: "#about" },
+  { label: "About", href: "#about", isHiddenOnPhones: true },
 ];
 
 export const helloWords = ["Hello", "नमस्ते", "नमस्कार", "Hola", "Bonjour", "こんにちは", "I'm Pranav"];
@@ -25,7 +25,7 @@ export const helloWords = ["Hello", "नमस्ते", "नमस्कार
 export const hero = {
   headline: "I build web apps and AI tools people enjoy using.",
   highlightedWord: "enjoy",
-  intro: "I'm Pranav, a full-stack developer at One Health Assist in Mumbai. I work across Next.js front ends, FastAPI back ends and the Postgres underneath, and lately a lot of LLM work.",
+  intro: "I'm Pranav Lande, a full-stack developer at One Health Assist in Mumbai. I work across Next.js front ends, FastAPI back ends and the Postgres underneath, and lately a lot of LLM work.",
   cardCode: {
     fileName: "pranav.py",
     variableName: "pranav",
@@ -177,7 +177,7 @@ export const contact = {
 export const footerNote = "Built with Next.js. Gray cat approved.";
 
 export const grayCatLines = {
-  idle: ["Don’t mind me. Just supervising.", "I reviewed his code. Mostly fine.", "Your cursor looks tasty.", "brb, knocking something off a desk.", "Mrrp.", "Is it dinner time yet?"],
+  idle: ["Don’t mind me. Just supervising.", "I reviewed his code. Mostly fine.", "Your cursor looks tasty.", "brb, knocking something off a desk.", "Mrrp.", "Is it dinner time yet?", "Scroll faster. I’m bored.", "I could do his job. I just don’t want to.", "Don’t look at me. Look at his projects.", "I’d hire him. He feeds me on time."],
   hero: ["Hi. I’m the gray cat. He works for me.", "Head of QA, reporting for duty."],
   work: ["jobscout? I helped. I sat on the keyboard.", "Skin Care AI says my fur is perfect.", "This page loads fast. I checked."],
   experience: ["Health Score: mine is 10 out of 10.", "He works on Health Score. I work on the sofa."],
@@ -185,8 +185,10 @@ export const grayCatLines = {
   contact: ["Tell him your idea. I’ll supervise.", "Send the message. I won’t read it. Probably."],
   peek: ["psst.", "...is he gone?", "Hello? Anyone scrolling?", "I see you."],
   jump: ["Ta-da.", "Nailed it.", "Did you see that?"],
-  click: ["Hey! I’m working.", "Purrr.", "Five more minutes.", "That tickles.", "Bug found: it was a moth."],
-  chase: ["!!!", "MINE.", "Come back here!", "Lunch!"],
+  click: ["Hey! I’m working.", "Purrr.", "Five more minutes.", "That tickles.", "Bug found: it was a moth.", "Did I say you could touch me?", "Bold of you.", "That’ll be one treat. Pay up.", "Ugh. Humans.", "Personal space. Look it up.", "Rude.", "You’re lucky I’m too lazy to scratch.", "Not now. I’m reviewing a pull request."],
+  clickAnnoyed: ["Okay, that’s enough.", "Click me again. I dare you.", "I’m filing a bug report. About you.", "Stop. Or I knock your coffee over.", "Keep going and I sit on your keyboard.", "Do you click everyone like this?", "Fine. I’m ignoring you now.", "This is why I don’t like people."],
+  chase: ["!!!", "MINE.", "Come back here!", "Lunch!", "Dinner is running away!", "Hold still, snack!"],
+  missedMouse: ["I let it go. On purpose.", "That mouse is lucky I’m on a diet.", "I wasn’t even trying.", "It cheated. Clearly.", "That was cardio, not a chase.", "Next time, mouse. Next time.", "We don’t talk about that.", "I meant to do that.", "Whatever. Didn’t want it anyway.", "The floor was slippery. Not my fault."],
   exit: ["Be right back.", "Off to inspect the footer.", "Gotta check something."],
   name: ["Name’s Simbha, by the way.", "Simbha. Remember it."],
 };

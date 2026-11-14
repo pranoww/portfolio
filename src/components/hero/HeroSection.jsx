@@ -12,7 +12,7 @@ export default function HeroSection() {
   return (
     <section className="relative isolate overflow-hidden pb-40 pt-9 md:pb-36 md:pt-14">
       <HeroWaves />
-      <div className="mx-auto grid max-w-[1180px] items-center gap-10 px-4 sm:px-7 md:grid-cols-[8fr_4fr] md:gap-14 [&>*]:min-w-0">
+      <div className="mx-auto grid max-w-[1180px] items-center gap-10 px-5 sm:px-7 md:grid-cols-[8fr_4fr] md:gap-14 [&>*]:min-w-0">
         <RevealOnScroll>
           <h1 className="font-display text-[clamp(40px,5.4vw,78px)] font-semibold leading-[.98] tracking-[-0.035em]">
             {headlineStart}

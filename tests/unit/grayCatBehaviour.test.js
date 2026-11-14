@@ -83,3 +83,25 @@ test('clicking the cat makes her hop and say something', () => {
   expect(cat.state.hopAmount).toBe(1);
   expect(spokenKinds).toContain('click');
 });
+
+test('clicking her three times in a row gets an annoyed reply, and she calms down after a pause', () => {
+  const spokenKinds = [];
+  const cat = createGrayCatBehaviour({ ...viewport, onSpeak: lineKind => spokenKinds.push(lineKind) });
+  cat.handleCatClick();
+  cat.handleCatClick();
+  cat.handleCatClick();
+  expect(spokenKinds).toEqual(['click', 'click', 'clickAnnoyed']);
+  runFor(cat, 5);
+  cat.handleCatClick();
+  expect(spokenKinds.at(-1)).toBe('click');
+});
+
+test('after losing the mouse off screen, the first thing she says on her way back is an excuse', () => {
+  const spokenKinds = [];
+  const cat = createGrayCatBehaviour({ ...viewport, onSpeak: lineKind => spokenKinds.push(lineKind) });
+  cat.startChase();
+  runFor(cat, 20, () => {});
+  expect(spokenKinds).toContain('missedMouse');
+  const spokenAfterChase = spokenKinds.slice(spokenKinds.indexOf('chase') + 1);
+  expect(spokenAfterChase[0]).toBe('missedMouse');
+});

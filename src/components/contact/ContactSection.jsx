@@ -12,7 +12,7 @@ const contactLinkList = [
 export default function ContactSection() {
   return (
     <section id="contact" className="bg-blue py-16 text-white md:py-[76px]">
-      <div className="mx-auto grid max-w-[1180px] gap-8 px-4 sm:px-7 md:grid-cols-[5fr_7fr] md:gap-14 [&>*]:min-w-0">
+      <div className="mx-auto grid max-w-[1180px] gap-8 px-5 sm:px-7 md:grid-cols-[5fr_7fr] md:gap-14 [&>*]:min-w-0">
         <RevealOnScroll>
           <h2 className="font-display text-[clamp(32px,4.2vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em]">{contact.title}</h2>
           <p className="mt-[18px] text-lg text-line md:text-[19px]">{contact.lead}</p>

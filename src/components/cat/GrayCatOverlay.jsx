@@ -61,12 +61,15 @@ export default function GrayCatOverlay() {
 
       let currentSection = "hero";
       let bubbleSecondsLeft = 0;
+      let lastSpokenLine = "";
       function speak(lineKind) {
         let lineList = grayCatLines[lineKind];
         if (lineKind === "chatter") {
           lineList = Math.random() < 0.08 ? grayCatLines.name : [...grayCatLines.idle, ...(grayCatLines[currentSection] || grayCatLines.hero)];
         }
-        bubble.textContent = pickRandom(lineList);
+        const freshLineList = lineList.filter(line => line !== lastSpokenLine);
+        lastSpokenLine = pickRandom(freshLineList.length > 0 ? freshLineList : lineList);
+        bubble.textContent = lastSpokenLine;
         bubbleSecondsLeft = lineKind === "chase" ? 1.6 : 2.8;
         bubble.style.opacity = "1";
         bubble.style.transform = "none";

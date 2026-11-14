@@ -22,12 +22,24 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
   const state = {
     mode: "sit", x: 0, y: 0, timer: Infinity,
     targetX: 0, afterWalk: null, jump: null, peekSide: null,
-    faceDirection: "front", isMoving: false, isRunningAfterMouse: false, hopAmount: 0,
+    faceDirection: "front", isMoving: false, isRunningAfterMouse: false, hopAmount: 0, hasMissedMouse: false,
   };
   const mouse = { isRunning: false, x: 0, y: 0, direction: 1, elapsed: 0 };
   let activityTimer = nextActivityDelay();
   let chatterTimer = pickBetween(20, 35);
   let isPaused = false;
+  let clickStreak = 0;
+  let secondsSinceLastClick = Infinity;
+
+  // After losing the mouse, the first thing she says on the way back is an excuse
+  function speak(lineKind) {
+    if (state.hasMissedMouse && lineKind !== "click" && lineKind !== "clickAnnoyed") {
+      state.hasMissedMouse = false;
+      onSpeak("missedMouse");
+      return;
+    }
+    onSpeak(lineKind);
+  }
 
   state.x = homeX();
   state.y = bottomY();
@@ -40,15 +52,15 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
     state.mode = "sit";
     state.timer = seconds ?? (isAtHome() ? Infinity : pickBetween(2, 4));
     state.peekSide = null;
-    if (shouldTalk) onSpeak("chatter");
+    if (shouldTalk) speak("chatter");
   }
 
   function goHome() {
-    walkTo(homeX(), () => sit());
+    walkTo(homeX(), () => sit(undefined, state.hasMissedMouse || undefined));
   }
 
   function goAway() {
-    if (random() < 0.5) onSpeak("exit");
+    if (random() < 0.5) speak("exit");
     walkTo(width + 14 * catUnit, () => { state.mode = "away"; state.timer = pickBetween(2, 6); });
   }
 
@@ -72,7 +84,7 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
 
   function peek(side) {
     Object.assign(state, { mode: "peek", timer: pickBetween(2.4, 4), peekSide: side });
-    onSpeak("peek");
+    speak("peek");
   }
 
   function finishPeek() {
@@ -135,14 +147,14 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
     if (!state.isRunningAfterMouse && mouseAheadDistance < 7 * catUnit + 40) {
       state.faceDirection = mouse.isRunning && Math.abs(mouse.x - state.x) < 7 * catUnit ? "front" : direction > 0 ? "left" : "right";
     } else {
-      if (!state.isRunningAfterMouse) { state.isRunningAfterMouse = true; onSpeak("chase"); }
+      if (!state.isRunningAfterMouse) { state.isRunningAfterMouse = true; speak("chase"); }
       const nextX = state.x + direction * runSpeed * deltaSeconds;
       state.x = mouse.isRunning && (mouse.x - nextX) * direction < 0 ? mouse.x - direction : nextX;
       state.isMoving = true;
       state.faceDirection = direction > 0 ? "right" : "left";
     }
     const hasLeftScreen = direction > 0 ? state.x > width + 16 * catUnit : state.x < -16 * catUnit;
-    if (hasLeftScreen) Object.assign(state, { mode: "away", isRunningAfterMouse: false, timer: pickBetween(3, 6) });
+    if (hasLeftScreen) Object.assign(state, { mode: "away", isRunningAfterMouse: false, hasMissedMouse: true, timer: pickBetween(3, 6) });
   }
 
   function updateJump(deltaSeconds) {
@@ -155,7 +167,7 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
       state.jump = null;
       state.y = bottomY();
       sit(isAtHome() ? undefined : pickBetween(3, 6), false);
-      onSpeak("jump");
+      speak("jump");
     }
   }
 
@@ -168,6 +180,7 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
 
   function update(deltaSeconds) {
     state.isMoving = false;
+    secondsSinceLastClick += deltaSeconds;
     if (state.mode === "walk") updateWalk(deltaSeconds);
     else if (state.mode === "chase") updateChase(deltaSeconds);
     else if (state.mode === "sit") { state.timer -= deltaSeconds; if (state.timer <= 0) { if (isAtHome()) sit(); else goHome(); } }
@@ -189,14 +202,16 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
       activityTimer -= deltaSeconds;
       if (activityTimer <= 0) { activityTimer = nextActivityDelay(); startRandomActivity(); }
       chatterTimer -= deltaSeconds;
-      if (chatterTimer <= 0) { chatterTimer = pickBetween(25, 45); if (random() < 0.6) onSpeak("chatter"); }
+      if (chatterTimer <= 0) { chatterTimer = pickBetween(25, 45); if (random() < 0.6) speak("chatter"); }
     }
     updateMouse(deltaSeconds);
   }
 
   function handleCatClick() {
     state.hopAmount = 1;
-    onSpeak("click");
+    clickStreak = secondsSinceLastClick < 4 ? clickStreak + 1 : 1;
+    secondsSinceLastClick = 0;
+    speak(clickStreak >= 3 ? "clickAnnoyed" : "click");
   }
 
   function pause() {

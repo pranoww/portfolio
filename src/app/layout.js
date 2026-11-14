@@ -5,6 +5,7 @@ import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SmoothScrollProvider from "@/components/layout/SmoothScrollProvider";
 import GrayCatOverlay from "@/components/cat/GrayCatOverlay";
+import { personStructuredData, seo, siteUrl } from "@/content/siteMetadata";
 import "./globals.css";
 
 const hostGrotesk = Host_Grotesk({ variable: "--font-host-grotesk", subsets: ["latin"] });
@@ -14,15 +15,26 @@ const plexMono = IBM_Plex_Mono({ variable: "--font-plex-mono", subsets: ["latin"
 const showIntroOnFirstVisit = `try { if (!sessionStorage.getItem("pl-hello")) document.documentElement.classList.add("is-loading"); } catch (error) {}`;
 
 export const metadata = {
-  title: "Pranav Lande · Full-stack and AI developer",
-  description: "Pranav Lande builds web apps and AI tools people enjoy using. Full-stack developer in Mumbai.",
+  metadataBase: new URL(siteUrl),
+  title: { default: seo.title, template: `%s · ${seo.shortTitle}` },
+  description: seo.description,
+  keywords: seo.keywordList,
+  authors: [{ name: seo.shortTitle, url: siteUrl }],
+  creator: seo.shortTitle,
+  alternates: { canonical: "/" },
+  openGraph: { type: "profile", url: "/", siteName: seo.shortTitle, title: seo.title, description: seo.description, firstName: "Pranav", lastName: "Lande", locale: "en_IN" },
+  twitter: { card: "summary_large_image", title: seo.title, description: seo.description },
+  robots: { index: true, follow: true },
 };
+
+export const viewport = { themeColor: "#f0f1fa" };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${hostGrotesk.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: showIntroOnFirstVisit }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personStructuredData) }} />
       </head>
       <body>
         <SmoothScrollProvider>

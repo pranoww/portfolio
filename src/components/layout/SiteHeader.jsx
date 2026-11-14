@@ -21,7 +21,7 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-20 h-[var(--header-height)] border-b border-line bg-bg/85 backdrop-blur-md">
-      <div className="mx-auto flex h-full max-w-[1180px] items-center justify-between px-4 sm:px-7">
+      <div className="mx-auto flex h-full max-w-[1180px] items-center justify-between px-5 sm:px-7">
         <a href="#top" className="flex items-center gap-2.5 font-display text-xl font-bold">
           <span aria-hidden="true" className="size-3 rounded-full bg-blue" />
           {profile.name}
@@ -40,10 +40,10 @@ export default function SiteHeader() {
 
         <nav
           id="site-navigation"
-          className={`${isMenuOpen ? "flex" : "hidden"} absolute inset-x-0 top-[var(--header-height)] flex-col border-b border-line bg-bg px-4 pb-5 pt-2 md:static md:flex md:flex-row md:items-center md:gap-6 md:border-0 md:bg-transparent md:p-0`}
+          className={`${isMenuOpen ? "flex" : "hidden"} absolute inset-x-0 top-[var(--header-height)] flex-col border-b border-line bg-bg px-5 pb-5 pt-2 md:static md:flex md:flex-row md:items-center md:gap-6 md:border-0 md:bg-transparent md:p-0`}
         >
           {navigationLinks.map(link => (
-            <a key={link.href} href={link.href} onClick={closeMenu} className="flex min-h-11 items-center border-b border-line font-medium hover:text-blue md:min-h-0 md:border-0">
+            <a key={link.href} href={link.href} onClick={closeMenu} className={`${link.isHiddenOnPhones ? "max-md:hidden" : "flex"} min-h-11 items-center border-b border-line font-medium hover:text-blue md:flex md:min-h-0 md:border-0`}>
               {link.label}
             </a>
           ))}

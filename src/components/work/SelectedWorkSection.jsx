@@ -7,7 +7,7 @@ import { projectList, selectedWork } from "@/content/siteContent";
 export default function SelectedWorkSection() {
   return (
     <section id="work" className="border-t border-line py-16 md:py-[76px]">
-      <div className="mx-auto max-w-[1180px] px-4 sm:px-7">
+      <div className="mx-auto max-w-[1180px] px-5 sm:px-7">
         <SectionHeading title={selectedWork.title} lead={selectedWork.lead} />
         <div className="grid gap-8">
           {projectList.map((project, index) => (

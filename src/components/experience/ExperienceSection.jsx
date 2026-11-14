@@ -7,8 +7,8 @@ import { experience } from "@/content/siteContent";
 
 export default function ExperienceSection() {
   return (
-    <section id="experience" className="border-t border-line py-16 md:py-[76px]">
-      <div className="mx-auto max-w-[1180px] px-4 sm:px-7">
+    <section id="experience" className="border-t border-line pb-16 pt-6 md:py-[76px]">
+      <div className="mx-auto max-w-[1180px] px-5 sm:px-7">
         <SectionHeading title={experience.title} lead={experience.lead} />
         <ExperienceTimelineBar />
         <div className="mt-11 grid gap-9 md:grid-cols-2 md:gap-x-14">
