@@ -3,6 +3,8 @@ import HeroSection from "@/components/hero/HeroSection";
 import SelectedWorkSection from "@/components/work/SelectedWorkSection";
 import StatementBand from "@/components/band/StatementBand";
 import WhatIBuildSection from "@/components/build/WhatIBuildSection";
+import ExperienceSection from "@/components/experience/ExperienceSection";
+import ContactSection from "@/components/contact/ContactSection";
 
 export default function HomePage() {
   return (
@@ -11,6 +13,8 @@ export default function HomePage() {
       <SelectedWorkSection />
       <StatementBand />
       <WhatIBuildSection />
+      <ExperienceSection />
+      <ContactSection />
     </main>
   );
 }
