@@ -1,0 +1,175 @@
+// All text and data shown on the site, kept in one place so copy can change without touching components
+
+export const profile = {
+  name: "Pranav Lande",
+  handle: "pranav.lande",
+  role: "Full-stack and AI developer",
+  currentJob: "Full-stack developer, One Health Assist",
+  location: "Mumbai",
+  timeZone: "Asia/Kolkata",
+  email: "pranavlande555@gmail.com",
+  githubUrl: "https://github.com/pranoww",
+  linkedinUrl: "https://www.linkedin.com/in/pranavlande",
+  resumePath: "/resume/Pranav_Kishor_Lande_Resume.pdf",
+};
+
+export const navigationLinks = [
+  { label: "Work", href: "#work" },
+  { label: "What I build", href: "#build" },
+  { label: "Experience", href: "#experience" },
+  { label: "About", href: "#about" },
+];
+
+export const helloWords = ["Hello", "नमस्ते", "नमस्कार", "Hola", "Bonjour", "こんにちは", "I'm Pranav"];
+
+export const hero = {
+  headline: "I build web apps and AI tools people enjoy using.",
+  intro: "I'm Pranav, a full-stack developer at One Health Assist in Mumbai. I work across Next.js front ends, FastAPI back ends and the Postgres underneath, and lately a lot of LLM work.",
+  cardDetails: [
+    { label: "Now", value: "Full-stack developer, One Health Assist" },
+    { label: "Stack", value: "Python, FastAPI, Next.js, PostgreSQL" },
+    { label: "Also", value: "LLM apps, RAG, LangGraph" },
+  ],
+  cardHint: "Click the card to flip it. A gray cat also wanders around this page.",
+};
+
+export const selectedWork = {
+  title: "Selected work",
+  lead: "Two things I built on my own time, end to end: the product idea, the interface, the API and the database.",
+};
+
+export const projectList = [
+  {
+    slug: "jobscout",
+    name: "jobscout",
+    summary: "Finds fresh hiring posts on LinkedIn and public Telegram job channels, keeps only the ones with a recruiter's email or phone number, and helps send a short personal email to each recruiter from your own Gmail.",
+    stack: ["FastAPI", "Next.js", "PostgreSQL", "Playwright"],
+    githubUrl: "https://github.com/pranoww/jobscout",
+    image: { src: "/projects/jobscout-scrape.png", width: 2160, height: 1350, alt: "jobscout's Scrape screen: keyword and channel filters on the left, a live list of found recruiter contacts on the right" },
+  },
+  {
+    slug: "skin-care-ai",
+    name: "Skin Care AI",
+    summary: "Describe a skin concern by typing or speaking, and get a careful answer from Google Gemini, read back aloud. Medical safety guardrails and prompt-injection protection are built in.",
+    stack: ["FastAPI", "Gemini", "Speech to text", "Next.js"],
+    githubUrl: "https://github.com/pranoww/skin-care-ai",
+    chatPreview: {
+      question: "My cheeks get red and itchy after I wash my face. What could it be?",
+      answer: "That often points to irritation from a harsh cleanser. Try a fragrance-free, gentle one for a week. If redness spreads or stings, please see a dermatologist.",
+      status: "Voice reply playing",
+    },
+  },
+];
+
+export const statementBand = {
+  quoteBefore: "I care about the details people actually feel, like a page that ",
+  quoteHighlight: "opens instantly",
+  quoteAfter: " or an AI answer you can trust.",
+  statList: [
+    { number: "4", text: "healthcare products I have worked on at One Health Assist" },
+    { number: "2", text: "personal products built end to end" },
+    { number: "1", text: "gray cat in charge of quality" },
+  ],
+};
+
+export const buildItemList = [
+  { number: "01", demo: "web", title: "Websites and web apps", description: "Layouts that hold up on every screen, from a wide monitor down to a phone.", proofPrefix: "Shipped in", proofList: ["PreventX", "Health Locker", "jobscout"], stackLine: "Next.js · React · Tailwind" },
+  { number: "02", demo: "api", title: "Backends and APIs", description: "Clean data models, OTP login and role-based access that says no when it should.", proofPrefix: "Shipped in", proofList: ["OHA Admin", "Health Score"], stackLine: "FastAPI · SQLAlchemy · Postgres" },
+  { number: "03", demo: "ai", title: "AI features", description: "Assistants that answer from real knowledge and stay inside safe limits.", proofPrefix: "Shipped in", proofList: ["Skin Care AI"], stackLine: "Gemini · RAG · Voice" },
+  { number: "04", demo: "speed", title: "Speed and search", description: "The quiet fixes that make a page open fast and get found on Google.", proofPrefix: "Done at", proofList: ["One Health Assist"], stackLine: "Lighthouse · Core Web Vitals" },
+];
+
+export const apiRequestList = [
+  { method: "POST", path: "/auth/otp/verify", status: 200, duration: "41ms" },
+  { method: "GET", path: "/scores/pillars", status: 200, duration: "18ms" },
+  { method: "PATCH", path: "/admin/roles/7", status: 403, duration: "6ms" },
+  { method: "POST", path: "/documents/merge", status: 201, duration: "212ms" },
+  { method: "GET", path: "/locker/files?page=2", status: 200, duration: "24ms" },
+];
+
+export const aiChatExample = {
+  question: "Is a gel moisturiser okay for oily skin?",
+  answer: 'Yes. Gel moisturisers are light and usually suit oily skin. Look for "non-comedogenic" on the label, and patch-test first if your skin is sensitive.',
+  badgeList: ["Safety check passed", "Voice reply ready"],
+};
+
+export const speedChecklist = [
+  "Images resized and lazy-loaded",
+  "Fonts load without a flash",
+  "Layout shift removed",
+  "Main image loads first",
+  "Unused JavaScript split out",
+  "Titles and meta tags for search",
+];
+
+export const experience = {
+  title: "Experience",
+  lead: "One Health Assist, Mumbai. November 2025 to now.",
+  timelineMonths: ["Nov 25", "Dec", "Jan 26", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Now"],
+  roleList: [
+    {
+      period: "Feb 2026 to now",
+      title: "Software Developer, Full-Stack",
+      pointList: [
+        "Work on Health Score across the frontend, backend, database and admin workflows.",
+        "Build FastAPI and Flask APIs, Next.js apps and PostgreSQL models with Alembic migrations.",
+        "Implemented OTP login, role-based access, permissions and session management.",
+      ],
+      tagLabel: "Worked on",
+      tagList: ["Health Score", "PreventX", "Health Locker", "OHA Admin"],
+    },
+    {
+      period: "Nov 2025 to Jan 2026",
+      title: "Software Development Intern",
+      pointList: [
+        "Audited pages with Google Lighthouse and fixed performance, SEO and accessibility issues.",
+        "Improved image loading and Core Web Vitals across the site.",
+      ],
+      tagLabel: "Tools",
+      tagList: ["Lighthouse", "Core Web Vitals"],
+    },
+  ],
+};
+
+export const aboutRoomIntro = { label: "My room", title: "Have a look around.", text: "Click a numbered dot to take a closer look." };
+
+export const roomObjectList = [
+  { label: "Based in", title: "Mumbai, India", text: "The view from here. Happy to work with teams anywhere, in person or remotely." },
+  { label: "Day job", title: "Full-stack developer at One Health Assist", text: "Next.js on the front, FastAPI and PostgreSQL behind it. Most of my day lives on this screen." },
+  { label: "Learning now", title: "RAG, vector search and LangGraph", text: "Building AI agents that can actually be trusted. The sticky notes keep changing." },
+  { label: "Studied", title: "BCA, KCSM College, Bengaluru", text: "Plus a certification in Data Analytics using Python and Machine Learning." },
+  { label: "Weekends", title: "Hill trails around Mumbai", text: "Most weekends I head up a hill. Best place to untangle a tricky bug." },
+  { label: "Cat bed", title: "Usually occupied", text: "The gray cat is somewhere else on this page right now. Try the bottom-right corner." },
+];
+
+export const skillGroupList = [
+  { title: "Frontend", itemList: ["Next.js, React", "Tailwind CSS", "HTML, CSS"] },
+  { title: "Backend", itemList: ["Python, FastAPI, Flask", "SQLAlchemy, Pydantic", "Node.js"] },
+  { title: "Data", itemList: ["PostgreSQL, MySQL", "MongoDB", "Pandas, Power BI"] },
+  { title: "AI", itemList: ["LLM apps, RAG", "Vector databases", "LangChain, LangGraph"] },
+  { title: "Quality", itemList: ["Lighthouse, Core Web Vitals", "SEO", "Datadog"] },
+  { title: "Tools", itemList: ["Git, Docker", "Alembic, Uvicorn", "DBeaver"] },
+];
+
+export const contact = {
+  title: "Got something to build?",
+  lead: "Tell me about it. I usually reply within a day.",
+  successMessage: "Thanks! I'll get back to you soon.",
+};
+
+export const footerNote = "Built with Next.js. Gray cat approved.";
+
+export const grayCatLines = {
+  idle: ["Don’t mind me. Just supervising.", "I reviewed his code. Mostly fine.", "Your cursor looks tasty.", "brb, knocking something off a desk.", "Mrrp.", "Is it dinner time yet?"],
+  hero: ["Hi. I’m the gray cat. He works for me.", "Head of QA, reporting for duty."],
+  work: ["jobscout? I helped. I sat on the keyboard.", "Skin Care AI says my fur is perfect.", "This page loads fast. I checked."],
+  experience: ["Health Score: mine is 10 out of 10.", "He works on Health Score. I work on the sofa."],
+  about: ["He walks hills on weekends. I nap. Balance.", "Fact: I’m the better developer."],
+  contact: ["Tell him your idea. I’ll supervise.", "Send the message. I won’t read it. Probably."],
+  peek: ["psst.", "...is he gone?", "Hello? Anyone scrolling?", "I see you."],
+  jump: ["Ta-da.", "Nailed it.", "Did you see that?"],
+  click: ["Hey! I’m working.", "Purrr.", "Five more minutes.", "That tickles.", "Bug found: it was a moth."],
+  chase: ["!!!", "MINE.", "Come back here!", "Lunch!"],
+  exit: ["Be right back.", "Off to inspect the footer.", "Gotta check something."],
+  name: ["Name’s Simbha, by the way.", "Simbha. Remember it."],
+};
