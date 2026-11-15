@@ -40,7 +40,7 @@ async function askSimbha(question, history, onText) {
   }
 }
 
-export default function SimbhaChat({ isOpen, onClose }) {
+export default function SimbhaChat({ isOpen, onClose, freshStart = null }) {
   const [messageList, setMessageList] = useState([]);
   const [draft, setDraft] = useState("");
   const [isWaiting, setIsWaiting] = useState(false);
@@ -56,6 +56,14 @@ export default function SimbhaChat({ isOpen, onClose }) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
+
+  // Woken up after his nap: the old conversation is gone and his wake-up grumble opens the new one
+  useEffect(() => {
+    if (!freshStart) return;
+    setMessageList([]);
+    setDraft("");
+    setOpeningLine(freshStart.line);
+  }, [freshStart]);
 
   useEffect(() => {
     const listElement = messageListRef.current;

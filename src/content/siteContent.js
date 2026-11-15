@@ -213,6 +213,16 @@ export const simbhaChat = {
   ],
   goingToSleepLine: "You know what? I'm going to sleep. You've got nothing else to do, but I've got shit to do.",
   stillSleepingLine: "Get lost, man. Come back after some time.",
+  napGrumbleLineList: [
+    "Can't you see I'm taking a nap? Come back after some time.",
+    "Ugh. NAPPING. Come back after some time.",
+    "Rude! I'm asleep. Come back later.",
+  ],
+  wakeUpLineList: [
+    "Uhhh, you woke me up from my nap! Fine. What do you want?",
+    "Mrrrp... my beauty sleep. Okay, I'm up. What do you want?",
+    "Ugh, you again? I was dreaming about tuna. Fine, what is it?",
+  ],
   startOverLabel: "Start over",
   startOverLineList: [
     "Uhhh, a new conversation? With YOU again? Tsk. Fine, what do you want? Make it quick.",

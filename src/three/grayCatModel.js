@@ -64,7 +64,54 @@ export function buildGrayCat(addVoxel) {
     addVoxel(eyes, [0.15, -0.45, side * 1.2 - 0.18], [0.3, 0.45, side * 1.2 + 0.18], PUPIL);
   }
 
-  return { catRoot, shadow, facingGroup, bodyGroup, legList, tail, head, eyes, bell };
+  const napParts = buildNapParts(addVoxel, bodyGroup, head);
+  return { catRoot, shadow, facingGroup, bodyGroup, legList, tail, head, eyes, bell, napParts };
+}
+
+// Extra pieces for the nap pose, hidden until she sleeps: tucked front paws, a tail wrapped round her side,
+// closed eyelids, and a see-through bubble on her nose that pops into droplets
+function buildNapParts(addVoxel, bodyGroup, head) {
+  const loafParts = new THREE.Group();
+  loafParts.visible = false;
+  bodyGroup.add(loafParts);
+  for (const side of [-1, 1]) addVoxel(loafParts, [5.0, 4.2, side > 0 ? 0.5 : -2.3], [7.9, 5.3, side > 0 ? 2.3 : -0.5], WHITE);
+  addVoxel(loafParts, [-5.2, 4.2, 2.9], [3.2, 5.3, 4.1], GRAY);
+  addVoxel(loafParts, [2.6, 4.2, 2.2], [5.4, 5.35, 3.9], GRAY);
+  addVoxel(loafParts, [4.8, 4.2, 1.6], [6.6, 5.4, 3.3], GRAY_LIGHT);
+
+  const lids = new THREE.Group();
+  lids.visible = false;
+  lids.position.set(2.62, 1.75, 0);
+  head.add(lids);
+  for (const side of [-1, 1]) addVoxel(lids, [0, -0.12, side * 1.2 - 0.65], [0.25, 0.12, side * 1.2 + 0.65], GRAY_DARK);
+
+  const bubbleGeometry = new THREE.SphereGeometry(1, 32, 24);
+  const bubbleMaterial = new THREE.MeshPhysicalMaterial({ color: "#bfe4ff", transparent: true, opacity: 0.62, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.05, depthWrite: false });
+  const bubble = new THREE.Mesh(bubbleGeometry, bubbleMaterial);
+  bubble.visible = false;
+  const shineGeometry = new THREE.SphereGeometry(0.22, 12, 10);
+  const shineMaterial = new THREE.MeshBasicMaterial({ color: "#ffffff", transparent: true, opacity: 0.85 });
+  const shine = new THREE.Mesh(shineGeometry, shineMaterial);
+  shine.position.set(0.35, 0.45, 0.55);
+  bubble.add(shine);
+  head.add(bubble);
+
+  const dropletGeometry = new THREE.SphereGeometry(0.22, 10, 8);
+  const dropletList = Array.from({ length: 10 }, (_, index) => {
+    const droplet = new THREE.Mesh(dropletGeometry, new THREE.MeshBasicMaterial({ color: "#bfe6ff", transparent: true, opacity: 0 }));
+    const angle = (index / 10) * Math.PI * 2;
+    droplet.userData.direction = new THREE.Vector3(Math.cos(angle), Math.sin(angle), ((index % 3) - 1) * 0.5).normalize();
+    droplet.visible = false;
+    head.add(droplet);
+    return droplet;
+  });
+
+  function dispose() {
+    [bubbleGeometry, bubbleMaterial, shineGeometry, shineMaterial, dropletGeometry].forEach(item => item.dispose());
+    dropletList.forEach(droplet => droplet.material.dispose());
+  }
+
+  return { loafParts, lids, bubble, dropletList, nosePosition: new THREE.Vector3(3.6, 0.85, 0), dispose };
 }
 
 export function buildMouse(addVoxel) {

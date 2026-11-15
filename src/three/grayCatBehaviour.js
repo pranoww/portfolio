@@ -1,11 +1,12 @@
 // The gray cat's behaviour as plain data and rules (no drawing): where she is, what she is doing, and when she acts.
 // She sits in the bottom-right corner and does one thing every 45-55 seconds: a stroll, a short trip off-screen, or a mouse chase.
+// After too many chat questions she naps at home ("nap" mode): silent, and only a passing mouse can get her up.
 
 const homeOffsetDesktop = 120;
 const homeOffsetMobile = 64;
 const bottomEdgeGap = 14;
 
-export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, isMobile, isCalm, catHeight, catUnit, onSpeak = () => {}, random = Math.random }) {
+export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, isMobile, isCalm, catHeight, catUnit, onSpeak = () => {}, random = Math.random, shouldNap = () => false }) {
   let width = viewportWidth;
   let height = viewportHeight;
   const calmFactor = isCalm ? 0.7 : 1;
@@ -52,7 +53,21 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
     state.mode = "sit";
     state.timer = seconds ?? (isAtHome() ? Infinity : pickBetween(2, 4));
     state.peekSide = null;
+    // Back home in the middle of a nap (after a mouse chase, say): straight back to sleep, no chatter
+    if (isAtHome() && shouldNap()) {
+      state.mode = "nap";
+      return;
+    }
     if (shouldTalk) speak("chatter");
+  }
+
+  function startNap() {
+    Object.assign(state, { mode: "nap", x: homeX(), y: bottomY(), jump: null, afterWalk: null, isRunningAfterMouse: false, peekSide: null, hopAmount: 0 });
+  }
+
+  // A visitor woke her after the nap was over: she gets up and sits at home as usual
+  function wakeUp() {
+    if (state.mode === "nap") Object.assign(state, { mode: "sit", timer: Infinity });
   }
 
   function goHome() {
@@ -195,8 +210,15 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
     else if (state.mode === "jump") updateJump(deltaSeconds);
 
     if (state.mode === "sit" || state.mode === "still") state.faceDirection = "front";
+    if (state.mode === "nap") state.faceDirection = "nap";
     if (state.mode === "peek") state.faceDirection = state.peekSide === "right" ? "left" : "front";
     if (state.hopAmount > 0) state.hopAmount = Math.max(0, state.hopAmount - deltaSeconds * 2);
+
+    // Napping: no chatter and no strolls, but every so often a mouse runs past and wakes her up for a chase
+    if (!isPaused && state.mode === "nap") {
+      activityTimer -= deltaSeconds;
+      if (activityTimer <= 0) { activityTimer = nextActivityDelay(); if (random() < 0.5) startChase(); }
+    }
 
     if (!isPaused && state.mode === "sit" && isAtHome()) {
       activityTimer -= deltaSeconds;
@@ -228,9 +250,9 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
   function resize(newWidth, newHeight) {
     width = newWidth;
     height = newHeight;
-    if (["sit", "walk", "chase", "still", "away"].includes(state.mode)) state.y = bottomY();
-    if (state.mode === "sit" || state.mode === "still") state.x = homeX();
+    if (["sit", "walk", "chase", "still", "away", "nap"].includes(state.mode)) state.y = bottomY();
+    if (state.mode === "sit" || state.mode === "still" || state.mode === "nap") state.x = homeX();
   }
 
-  return { state, mouse, update, startChase, handleCatClick, pause, resume, resize };
+  return { state, mouse, update, startChase, handleCatClick, pause, resume, resize, startNap, wakeUp };
 }

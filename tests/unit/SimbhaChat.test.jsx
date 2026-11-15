@@ -118,3 +118,14 @@ test('Start over clears the chat with a fresh annoyed line but keeps the questio
   expect(screen.getByRole('button', { name: 'What has he built?' })).toBeInTheDocument();
   expect(JSON.parse(localStorage.getItem('simbha-chat-limit')).questionCount).toBe(countBefore);
 });
+
+test('waking Simbha after his nap clears the old chat and opens with his wake-up line', async () => {
+  mockSimbhaApi(streamedResponse(['Mrrp.']));
+  const { rerender } = render(<SimbhaChat isOpen onClose={() => {}} freshStart={null} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Can I hire him?' }));
+  await screen.findByText('Mrrp.');
+  rerender(<SimbhaChat isOpen onClose={() => {}} freshStart={{ line: 'Uhhh, you woke me up! What do you want?', id: 1 }} />);
+  expect(screen.getByText('Uhhh, you woke me up! What do you want?')).toBeInTheDocument();
+  expect(screen.queryByText('Mrrp.')).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'What has he built?' })).toBeInTheDocument();
+});

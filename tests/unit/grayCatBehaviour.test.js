@@ -105,3 +105,38 @@ test('after losing the mouse off screen, the first thing she says on her way bac
   const spokenAfterChase = spokenKinds.slice(spokenKinds.indexOf('chase') + 1);
   expect(spokenAfterChase[0]).toBe('missedMouse');
 });
+
+test('napping keeps her at home, quiet, facing the visitor', () => {
+  const spokenList = [];
+  const cat = createGrayCatBehaviour({ ...viewport, onSpeak: line => spokenList.push(line), random: () => 0.9, shouldNap: () => true });
+  cat.startNap();
+  runFor(cat, 120);
+  expect(cat.state.mode).toBe('nap');
+  expect(cat.state.x).toBe(1440 - 120);
+  expect(cat.state.faceDirection).toBe('nap');
+  expect(spokenList).toEqual([]);
+});
+
+test('a passing mouse wakes her from a nap, and she goes back to sleep at home if the nap is not over', () => {
+  const cat = createGrayCatBehaviour({ ...viewport, random: () => 0.3, shouldNap: () => true });
+  cat.startNap();
+  let didChase = false;
+  runFor(cat, 56, () => { if (cat.state.mode === 'chase') didChase = true; });
+  expect(didChase).toBe(true);
+  runFor(cat, 40);
+  expect(cat.state.mode).toBe('nap');
+  expect(Math.abs(cat.state.x - (1440 - 120))).toBeLessThan(24);
+});
+
+test('after the nap is over she stays awake after a chase, and waking her makes her sit', () => {
+  let isNapOver = false;
+  const cat = createGrayCatBehaviour({ ...viewport, random: () => 0.3, shouldNap: () => !isNapOver });
+  cat.startNap();
+  isNapOver = true;
+  cat.wakeUp();
+  expect(cat.state.mode).toBe('sit');
+  cat.startNap();
+  cat.startChase();
+  runFor(cat, 40);
+  expect(cat.state.mode).not.toBe('nap');
+});
