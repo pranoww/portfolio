@@ -1,6 +1,7 @@
 // The gray cat's behaviour as plain data and rules (no drawing): where she is, what she is doing, and when she acts.
 // She sits in the bottom-right corner and does one thing every 45-55 seconds: a stroll, a short trip off-screen, or a mouse chase.
 // After too many chat questions she naps at home ("nap" mode): silent, and only a passing mouse can get her up.
+// When someone looks at her bed in the About room she dashes off-screen ("inBed" mode) until they look away.
 
 const homeOffsetDesktop = 120;
 const homeOffsetMobile = 64;
@@ -22,7 +23,7 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
 
   const state = {
     mode: "sit", x: 0, y: 0, timer: Infinity,
-    targetX: 0, afterWalk: null, jump: null, peekSide: null,
+    targetX: 0, afterWalk: null, jump: null, peekSide: null, isDashing: false,
     faceDirection: "front", isMoving: false, isRunningAfterMouse: false, hopAmount: 0, hasMissedMouse: false,
   };
   const mouse = { isRunning: false, x: 0, y: 0, direction: 1, elapsed: 0 };
@@ -59,6 +60,23 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
       return;
     }
     if (shouldTalk) speak("chatter");
+  }
+
+  // Someone opened her bed in the About room: she dashes off-screen and stays there until they look away
+  function goToBed() {
+    mouse.isRunning = false;
+    if (state.mode === "away" || state.mode === "inBed") {
+      Object.assign(state, { mode: "inBed", isDashing: false });
+      return;
+    }
+    speak("bed");
+    Object.assign(state, { y: bottomY(), jump: null, peekSide: null, isRunningAfterMouse: false, isDashing: true });
+    walkTo(width + 16 * catUnit, () => Object.assign(state, { mode: "inBed", isDashing: false }));
+  }
+
+  function leaveBed() {
+    if (state.mode === "inBed") comeBack();
+    else if (state.isDashing) { state.isDashing = false; goHome(); }
   }
 
   function startNap() {
@@ -143,7 +161,7 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
 
   function updateWalk(deltaSeconds) {
     const distanceLeft = state.targetX - state.x;
-    const stepDistance = walkSpeed * deltaSeconds;
+    const stepDistance = (state.isDashing ? runSpeed : walkSpeed) * deltaSeconds;
     state.faceDirection = distanceLeft > 0 ? "right" : "left";
     if (Math.abs(distanceLeft) <= stepDistance) {
       state.x = state.targetX;
@@ -239,7 +257,7 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
   function pause() {
     isPaused = true;
     mouse.isRunning = false;
-    Object.assign(state, { mode: "still", x: homeX(), y: bottomY(), jump: null, afterWalk: null, isRunningAfterMouse: false });
+    Object.assign(state, { mode: "still", x: homeX(), y: bottomY(), jump: null, afterWalk: null, isRunningAfterMouse: false, isDashing: false });
   }
 
   function resume() {
@@ -250,9 +268,9 @@ export default function createGrayCatBehaviour({ viewportWidth, viewportHeight, 
   function resize(newWidth, newHeight) {
     width = newWidth;
     height = newHeight;
-    if (["sit", "walk", "chase", "still", "away", "nap"].includes(state.mode)) state.y = bottomY();
+    if (["sit", "walk", "chase", "still", "away", "nap", "inBed"].includes(state.mode)) state.y = bottomY();
     if (state.mode === "sit" || state.mode === "still" || state.mode === "nap") state.x = homeX();
   }
 
-  return { state, mouse, update, startChase, handleCatClick, pause, resume, resize, startNap, wakeUp };
+  return { state, mouse, update, startChase, handleCatClick, pause, resume, resize, startNap, wakeUp, goToBed, leaveBed };
 }

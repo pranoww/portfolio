@@ -1,17 +1,32 @@
 // Full-screen 3D room for "A bit about me": numbered dots on six objects; clicking one flies the camera there and shows its story.
 // Dots for objects outside the view stay pinned to the screen edge so every object can always be reached. three.js loads lazily.
+// Opening the cat bed sends the corner cat running ("simbha:bed" event) and a mini Simbha hops into the bed and naps there.
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { aboutRoomIntro, roomObjectList } from "@/content/siteContent";
 
 const flyDurationSeconds = 1.3;
 const easeInOut = progress => (progress < 0.5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2);
+const easeOut = progress => 1 - (1 - progress) ** 3;
+// The mini Simbha waits for the camera to arrive, then drops into the bed; he hops out faster when people look away
+const bedCatDelaySeconds = 0.85;
+const bedCatDropSeconds = 0.5;
+const bedCatLeaveSeconds = 0.35;
+// Room units (before the room's 0.5 scale): the middle of the bed cushion, and how big he is in it
+const bedCatPosition = [-13.2, 2.2, 8.2];
+const bedCatScale = 0.55;
+const bedCatDropHeight = 12;
+
+function tellCornerCat(isLookingAtBed) {
+  window.dispatchEvent(new CustomEvent("simbha:bed", { detail: { isLookingAtBed } }));
+}
 
 export default function AboutRoomCanvas() {
   const roomRef = useRef(null);
   const canvasRef = useRef(null);
   const dotRefList = useRef([]);
   const flyToObjectRef = useRef(() => {});
+  const setBedCatWantedRef = useRef(() => {});
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   useEffect(() => {
@@ -19,8 +34,8 @@ export default function AboutRoomCanvas() {
     let cleanUpScene = () => {};
 
     async function startScene() {
-      const [THREE, { default: createVoxelBuilder }, { buildAboutRoom }, { closeUpPoseList, getOverviewPose, placeDotOnScreen }] = await Promise.all([
-        import("three"), import("@/three/voxelBuilder"), import("@/three/aboutRoomModel"), import("@/three/aboutRoomCameraPoses"),
+      const [THREE, { default: createVoxelBuilder }, { buildAboutRoom }, { closeUpPoseList, getOverviewPose, placeDotOnScreen }, { buildGrayCat }] = await Promise.all([
+        import("three"), import("@/three/voxelBuilder"), import("@/three/aboutRoomModel"), import("@/three/aboutRoomCameraPoses"), import("@/three/grayCatModel"),
       ]);
       const { RoomEnvironment } = await import("three/addons/environments/RoomEnvironment.js");
       if (isUnmounted) return;
@@ -60,6 +75,32 @@ export default function AboutRoomCanvas() {
       const room = buildAboutRoom(voxelBuilder.addVoxel);
       scene.add(room.roomGroup);
       lampLight.position.copy(room.lampLightPosition);
+
+      // Mini Simbha for the cat bed: his real model in the nap pose (loaf, eyes shut, bubble on his nose), hidden until needed
+      const bedCat = buildGrayCat(voxelBuilder.addVoxel);
+      bedCat.catRoot.rotation.x = 0;
+      bedCat.catRoot.visible = false;
+      bedCat.shadow.visible = false;
+      bedCat.facingGroup.rotation.y = -Math.PI / 2 + 0.44;
+      bedCat.legList.forEach(({ legGroup }) => { legGroup.visible = false; });
+      bedCat.tail.visible = false;
+      bedCat.napParts.loafParts.visible = true;
+      bedCat.bodyGroup.position.y = -4.2;
+      bedCat.head.position.set(6.4, 7.4, 0);
+      bedCat.head.rotation.set(0.12, 0, 0.32);
+      bedCat.eyes.visible = false;
+      bedCat.napParts.lids.visible = true;
+      room.roomGroup.add(bedCat.catRoot);
+      const isCalm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let isBedCatWanted = false;
+      let bedCatDelayLeft = 0;
+      let bedCatProgress = 0;
+      let isRoomVisible = false;
+      setBedCatWantedRef.current = isWanted => {
+        if (isWanted && !isBedCatWanted) bedCatDelayLeft = isCalm ? 0 : bedCatDelaySeconds;
+        isBedCatWanted = isWanted;
+        tellCornerCat(isWanted && isRoomVisible);
+      };
 
       const brightenedMaterialByOriginal = new Map();
       function setObjectHighlight(objectIndex, isHighlighted) {
@@ -148,6 +189,25 @@ export default function AboutRoomCanvas() {
         camera.position.copy(cameraPosition);
         camera.lookAt(cameraTarget);
         lampLight.intensity = 14 + Math.sin(now / 500) * 0.6;
+
+        // Mini Simbha drops into the bed, breathes with a bubble on his nose, and hops back out when people look away
+        if (isBedCatWanted) {
+          bedCatDelayLeft -= deltaSeconds;
+          if (bedCatDelayLeft <= 0) bedCatProgress = isCalm ? 1 : Math.min(1, bedCatProgress + deltaSeconds / bedCatDropSeconds);
+        } else {
+          bedCatProgress = isCalm ? 0 : Math.max(0, bedCatProgress - deltaSeconds / bedCatLeaveSeconds);
+        }
+        bedCat.catRoot.visible = bedCatProgress > 0;
+        if (bedCat.catRoot.visible) {
+          const breath = (Math.sin(now / 1000 * 1.7) + 1) / 2;
+          bedCat.catRoot.position.set(bedCatPosition[0], bedCatPosition[1] + (1 - easeOut(bedCatProgress)) * bedCatDropHeight, bedCatPosition[2]);
+          bedCat.catRoot.scale.setScalar(bedCatScale * (isBedCatWanted ? 1 : bedCatProgress));
+          bedCat.bodyGroup.scale.y = isCalm ? 1 : 1 + breath * 0.025;
+          const bubbleSize = bedCatProgress < 1 ? 0 : 0.8 + (isCalm ? 1.1 : breath * 2.2);
+          bedCat.napParts.bubble.visible = bubbleSize > 0;
+          bedCat.napParts.bubble.scale.setScalar(Math.max(0.01, bubbleSize));
+          bedCat.napParts.bubble.position.copy(bedCat.napParts.nosePosition).add(new THREE.Vector3(bubbleSize * 0.55, -bubbleSize * 0.2, -bubbleSize * 0.85));
+        }
         renderer.render(scene, camera);
 
         room.objectAnchorList.forEach((anchor, objectIndex) => {
@@ -164,6 +224,9 @@ export default function AboutRoomCanvas() {
       renderFrame(previousTime);
       const visibilityObserver = new IntersectionObserver(([entry]) => {
         isVisible = entry.isIntersecting;
+        // Scrolled away from the room while his bed was open: the corner cat comes back, and runs off again on return
+        isRoomVisible = isVisible;
+        if (isBedCatWanted) tellCornerCat(isVisible);
         cancelAnimationFrame(animationFrameId);
         if (isVisible) { previousTime = performance.now(); animationFrameId = requestAnimationFrame(renderFrame); }
       });
@@ -177,6 +240,8 @@ export default function AboutRoomCanvas() {
         canvas.removeEventListener("click", handleCanvasClick);
         brightenedMaterialByOriginal.forEach(material => material.dispose());
         voxelBuilder.disposeAll();
+        bedCat.napParts.dispose();
+        if (isBedCatWanted) tellCornerCat(false);
         environmentGenerator.dispose();
         renderer.dispose();
       };
@@ -188,6 +253,7 @@ export default function AboutRoomCanvas() {
 
   useEffect(() => {
     flyToObjectRef.current(selectedIndex);
+    setBedCatWantedRef.current(Boolean(roomObjectList[selectedIndex]?.isCatBed));
   }, [selectedIndex]);
 
   useEffect(() => {
@@ -196,7 +262,9 @@ export default function AboutRoomCanvas() {
     return () => window.removeEventListener("keydown", returnToWholeRoomOnEscape);
   }, []);
 
-  const caption = selectedIndex < 0 ? aboutRoomIntro : roomObjectList[selectedIndex];
+  const selectedObject = roomObjectList[selectedIndex];
+  // While he's in it, the cat bed's caption owns up to it
+  const caption = !selectedObject ? aboutRoomIntro : selectedObject.isCatBed ? { ...selectedObject, title: selectedObject.occupiedTitle, text: selectedObject.occupiedText } : selectedObject;
   const isZoomedIn = selectedIndex >= 0;
 
   return (

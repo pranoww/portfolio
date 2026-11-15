@@ -137,6 +137,13 @@ export default function GrayCatOverlay() {
       behaviourRef.current = behaviour;
       // Still mid-nap from before a page refresh: he goes straight back to sleep
       if (isSimbhaSleeping()) behaviour.startNap();
+
+      // The About room tells him when someone opens or leaves his bed: he dashes off to it, then comes back
+      function handleBedView(event) {
+        if (isChatOpenRef.current) return;
+        if (event.detail?.isLookingAtBed) behaviour.goToBed(); else behaviour.leaveBed();
+      }
+      window.addEventListener("simbha:bed", handleBedView);
       if (new URLSearchParams(window.location.search).has("chase")) behaviour.startChase();
 
       function resizeScene() {
@@ -311,6 +318,7 @@ export default function GrayCatOverlay() {
         cancelAnimationFrame(animationFrameId);
         window.removeEventListener("resize", resizeScene);
         window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("simbha:bed", handleBedView);
         document.removeEventListener("visibilitychange", handleVisibilityChange);
         sectionObserver.disconnect();
         voxelBuilder.disposeAll();

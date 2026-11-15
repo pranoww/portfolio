@@ -164,7 +164,7 @@ export const roomObjectList = [
   { label: "Learning now", title: "RAG, vector search and LangGraph", text: "Building AI agents that can actually be trusted. The sticky notes keep changing." },
   { label: "Studied", title: "BCA, KCSM College, Bengaluru", text: "Plus a certification in Data Analytics using Python and Machine Learning." },
   { label: "Weekends", title: "Hill trails around Mumbai", text: "Most weekends I head up a hill. Best place to untangle a tricky bug." },
-  { label: "Cat bed", title: "Usually occupied", text: "The gray cat is somewhere else on this page right now. Try the bottom-right corner." },
+  { label: "Cat bed", title: "Usually occupied", text: "The gray cat is somewhere else on this page right now. Try the bottom-right corner.", isCatBed: true, occupiedTitle: "Occupied. Told you.", occupiedText: "He ran over the second you looked. Pick another spot and he'll go back to his corner." },
 ];
 
 
@@ -179,6 +179,7 @@ export const footerNote = "Built with Next.js. Gray cat approved.";
 export const grayCatLines = {
   idle: ["Don’t mind me. Just supervising.", "I reviewed his code. Mostly fine.", "Your cursor looks tasty.", "brb, knocking something off a desk.", "Mrrp.", "Is it dinner time yet?", "Scroll faster. I’m bored.", "I could do his job. I just don’t want to.", "Don’t look at me. Look at his projects.", "I’d hire him. He feeds me on time."],
   hero: ["Hi. I’m the gray cat. He works for me.", "Head of QA, reporting for duty.", "Click me. I know things about him."],
+  bed: ["MY BED! Coming!", "Hey! That's my spot!", "Nobody looks at my bed without me in it!"],
   chatHint: ["Click me. I know everything about him.", "Psst. Click me. Ask me anything.", "Got questions? I’m the expert. Click."],
   work: ["jobscout? I helped. I sat on the keyboard.", "Skin Care AI says my fur is perfect.", "This page loads fast. I checked."],
   experience: ["Health Score: mine is 10 out of 10.", "He works on Health Score. I work on the sofa."],

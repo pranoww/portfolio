@@ -140,3 +140,36 @@ test('after the nap is over she stays awake after a chase, and waking her makes 
   runFor(cat, 40);
   expect(cat.state.mode).not.toBe('nap');
 });
+
+test('looking at her bed in the About room sends her dashing off-screen until people look away', () => {
+  const spokenList = [];
+  const cat = createGrayCatBehaviour({ ...viewport, onSpeak: line => spokenList.push(line), random: () => 0.9 });
+  cat.goToBed();
+  expect(spokenList).toEqual(['bed']);
+  runFor(cat, 1.5);
+  expect(cat.state.mode).toBe('inBed');
+  expect(cat.state.x).toBeGreaterThan(1440);
+  runFor(cat, 120);
+  expect(cat.state.mode).toBe('inBed');
+  cat.leaveBed();
+  runFor(cat, 30);
+  expect(cat.state.mode).toBe('sit');
+  expect(Math.abs(cat.state.x - (1440 - 120))).toBeLessThan(24);
+});
+
+test('looking away mid-dash sends her straight home, and a napping cat goes back to sleep after her bed trip', () => {
+  const cat = createGrayCatBehaviour({ ...viewport, random: () => 0.9 });
+  cat.goToBed();
+  runFor(cat, 0.2);
+  cat.leaveBed();
+  runFor(cat, 10);
+  expect(cat.state.mode).toBe('sit');
+
+  const sleepyCat = createGrayCatBehaviour({ ...viewport, random: () => 0.9, shouldNap: () => true });
+  sleepyCat.startNap();
+  sleepyCat.goToBed();
+  runFor(sleepyCat, 2);
+  sleepyCat.leaveBed();
+  runFor(sleepyCat, 30);
+  expect(sleepyCat.state.mode).toBe('nap');
+});
