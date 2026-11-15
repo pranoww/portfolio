@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { helloWords } from "@/content/siteContent";
 
-const firstWordDelay = 420;
-const wordDelay = 230;
-const lastWordDelay = 650;
-const slideAwayDuration = 700;
+const firstWordDelay = 200;
+const wordDelay = 120;
+const lastWordDelay = 320;
+const slideAwayDuration = 450;
 
 export default function HelloLoader() {
   const [wordIndex, setWordIndex] = useState(0);
@@ -50,7 +50,7 @@ export default function HelloLoader() {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] hidden items-center justify-center bg-ink font-display text-[clamp(44px,8vw,96px)] font-semibold tracking-[-0.02em] text-white transition-transform duration-700 ease-[cubic-bezier(.76,0,.24,1)] [.is-loading_&]:flex ${isSlidingAway ? "-translate-y-full" : ""}`}
+      className={`fixed inset-0 z-[100] hidden items-center justify-center bg-ink font-display text-[clamp(44px,8vw,96px)] font-semibold tracking-[-0.02em] text-white transition-transform duration-[450ms] ease-[cubic-bezier(.76,0,.24,1)] [.is-loading_&]:flex ${isSlidingAway ? "-translate-y-full" : ""}`}
     >
       <span aria-hidden="true" className="mr-[.35em] size-[.24em] rounded-full bg-lime" />
       <span aria-hidden="true">{helloWords[wordIndex]}</span>

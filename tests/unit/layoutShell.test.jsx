@@ -18,9 +18,10 @@ describe('HelloLoader', () => {
   test('shows each greeting in order, then hides and remembers the visit', () => {
     render(<HelloLoader />);
     expect(screen.getByText(helloWords[0])).toBeInTheDocument();
-    act(() => vi.advanceTimersByTime(420));
+    act(() => vi.advanceTimersByTime(200));
     expect(screen.getByText(helloWords[1])).toBeInTheDocument();
-    act(() => vi.advanceTimersByTime(10_000));
+    // The whole intro, every greeting plus the slide away, is over within 1.6 seconds
+    act(() => vi.advanceTimersByTime(1400));
     expect(document.documentElement.classList.contains('is-loading')).toBe(false);
     expect(sessionStorage.getItem('pl-hello')).toBe('1');
   });

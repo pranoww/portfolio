@@ -247,8 +247,15 @@ export default function AboutRoomCanvas() {
       };
     }
 
-    startScene();
-    return () => { isUnmounted = true; cleanUpScene(); };
+    // The room sits far down the page, so its 3D scene loads only once the visitor scrolls within about a screen of it
+    const approachObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      approachObserver.disconnect();
+      startScene();
+    }, { rootMargin: "100% 0px" });
+    approachObserver.observe(roomRef.current);
+
+    return () => { isUnmounted = true; approachObserver.disconnect(); cleanUpScene(); };
   }, []);
 
   useEffect(() => {

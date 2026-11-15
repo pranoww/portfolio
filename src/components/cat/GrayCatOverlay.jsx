@@ -13,6 +13,8 @@ const yawByFaceDirection = { front: -Math.PI / 2, right: 0, left: Math.PI, nap: 
 const grumbleSeconds = 2.6;
 const bubbleRegrowSeconds = 1.2;
 const wakeUpChatDelayMs = 1100;
+// How long after the page finishes loading the 3D cat appears if the visitor hasn't scrolled, tapped or typed yet
+const catStartDelayMs = 3500;
 const easeTowards = (current, target, deltaSeconds, speed) => current + (target - current) * (1 - Math.exp(-deltaSeconds * speed));
 const sectionIdList = ["work", "build", "experience", "about", "contact"];
 const pickRandom = list => list[Math.floor(Math.random() * list.length)];
@@ -328,8 +330,31 @@ export default function GrayCatOverlay() {
       };
     }
 
-    startScene();
-    return () => { isUnmounted = true; cleanUpScene(); };
+    // three.js is the heaviest thing on the page, so the cat waits until the page has settled: the visitor's first
+    // scroll, tap or key press, or a few quiet seconds after loading, whichever comes first
+    let hasStarted = false;
+    let idleTimer = 0;
+    const wakeEventList = ["pointerdown", "keydown", "wheel", "touchstart", "scroll"];
+    function startOnce() {
+      if (hasStarted || isUnmounted) return;
+      hasStarted = true;
+      clearTimeout(idleTimer);
+      wakeEventList.forEach(eventName => window.removeEventListener(eventName, startOnce));
+      startScene();
+    }
+    function startWhenQuiet() {
+      idleTimer = setTimeout(() => (window.requestIdleCallback ? window.requestIdleCallback(startOnce, { timeout: 1500 }) : startOnce()), catStartDelayMs);
+    }
+    wakeEventList.forEach(eventName => window.addEventListener(eventName, startOnce, { once: true, passive: true }));
+    if (document.readyState === "complete") startWhenQuiet(); else window.addEventListener("load", startWhenQuiet, { once: true });
+
+    return () => {
+      isUnmounted = true;
+      clearTimeout(idleTimer);
+      window.removeEventListener("load", startWhenQuiet);
+      wakeEventList.forEach(eventName => window.removeEventListener(eventName, startOnce));
+      cleanUpScene();
+    };
   }, []);
 
   function handlePauseClick() {

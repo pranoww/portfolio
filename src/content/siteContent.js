@@ -52,7 +52,7 @@ export const projectList = [
     summary: "Finds fresh hiring posts on LinkedIn and public Telegram job channels, keeps only the ones with a recruiter's email or phone number, and helps send a short personal email to each recruiter from your own Gmail.",
     stack: ["FastAPI", "Next.js", "PostgreSQL", "Playwright"],
     githubUrl: "https://github.com/pranoww/jobscout",
-    image: { src: "/projects/jobscout-scrape.png", width: 2160, height: 1350, alt: "jobscout's Scrape screen: keyword and channel filters on the left, a live list of found recruiter contacts on the right" },
+    image: { src: "/projects/jobscout-scrape.webp", width: 1280, height: 800, alt: "jobscout's Scrape screen: keyword and channel filters on the left, a live list of found recruiter contacts on the right" },
   },
   {
     slug: "skin-care-ai",
