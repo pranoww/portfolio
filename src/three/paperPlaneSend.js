@@ -10,10 +10,6 @@ import { cubicBezierHeading, cubicBezierPoint, easeInOutCubic, easeInQuad, easeO
 const timeline = { crumpleEnd: 0.95, planeArriveStart: 0.3, tossStart: 1, catchTime: 1.55, dipEnd: 1.8, exitDuration: 1.25, showSuccessAfterExitStart: 1.05, returnDuration: 0.85, trailFade: 1.6 };
 const bankAngle = 0.62;
 
-export function canPlayPaperPlaneSend() {
-  return typeof window.WebGL2RenderingContext !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 function createFlightLayer() {
   const canvas = document.createElement("canvas");
   canvas.setAttribute("aria-hidden", "true");

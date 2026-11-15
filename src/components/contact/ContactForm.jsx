@@ -3,7 +3,12 @@
 import { useState } from "react";
 import PillButton from "@/components/ui/PillButton";
 import { contact, profile } from "@/content/siteContent";
-import { canPlayPaperPlaneSend, playPaperPlaneSend } from "@/three/paperPlaneSend";
+
+// The paper plane needs three.js, the heaviest code on the site, so it loads only once someone starts filling in the form
+// (and is usually ready by the time they press Send), never with the page itself
+const canPlayPaperPlane = () => typeof window.WebGL2RenderingContext !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let paperPlanePromise = null;
+const loadPaperPlane = () => (paperPlanePromise ??= import("@/three/paperPlaneSend"));
 
 const contactApiUrl = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api"}/contact`;
 const sendFailedMessage = "Sorry, that didn’t go through. Please try again or email me directly.";
@@ -63,7 +68,14 @@ export default function ContactForm() {
     const formElement = event.currentTarget;
     setSendStatus("sending");
     const sendResultPromise = sendContactMessage(formValues);
-    if (canPlayPaperPlaneSend()) await playPaperPlaneSend(formElement, sendResultPromise.then(sendResult => sendResult.isSent));
+    if (canPlayPaperPlane()) {
+      try {
+        const { playPaperPlaneSend } = await loadPaperPlane();
+        await playPaperPlaneSend(formElement, sendResultPromise.then(sendResult => sendResult.isSent));
+      } catch {
+        // The animation couldn't load (offline, say): the message still sends and the thank-you note still shows
+      }
+    }
     const sendResult = await sendResultPromise;
     if (sendResult.isSent) {
       setSentFormHeight(formElement.offsetHeight);
@@ -88,7 +100,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form noValidate onSubmit={handleContactFormSubmit} className="grid gap-4 rounded-[18px] bg-surface p-[22px] text-ink sm:p-[30px]">
+    <form noValidate onSubmit={handleContactFormSubmit} onFocus={() => { if (canPlayPaperPlane()) loadPaperPlane(); }} className="grid gap-4 rounded-[18px] bg-surface p-[22px] text-ink sm:p-[30px]">
       {formFieldList.map(field => {
         const FieldElement = field.isMultiline ? "textarea" : "input";
         const errorId = `${field.name}-error`;
