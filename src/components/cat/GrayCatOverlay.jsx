@@ -1,8 +1,9 @@
 // The gray cat that lives in the bottom-right corner of every page: draws her in 3D, follows the cursor with her head,
-// shows her speech bubble and offers a "Pause cat" button. three.js loads only after the page is ready.
+// shows her speech bubble and offers a "Pause cat" button. Clicking the cat opens Simbha's chat. three.js loads only after the page is ready.
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { grayCatLines } from "@/content/siteContent";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { grayCatLines, simbhaChat } from "@/content/siteContent";
+import { isSimbhaSleeping } from "@/components/cat/simbhaChatLimit";
 import SimbhaChat from "@/components/cat/SimbhaChat";
 
 const yawByFaceDirection = { front: -Math.PI / 2, right: 0, left: Math.PI };
@@ -14,6 +15,12 @@ const shortestAngle = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
 export default function GrayCatOverlay() {
   const canvasRef = useRef(null);
   const bubbleRef = useRef(null);
+  const catButtonRef = useRef(null);
+  const isChatOpenRef = useRef(false);
+  // Lets code outside the 3D scene make the cat say a specific line in his bubble
+  const sayRef = useRef(() => {});
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [hasCatFailed, setHasCatFailed] = useState(false);
   const behaviourRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
   const isPausedForChatRef = useRef(false);
@@ -36,6 +43,7 @@ export default function GrayCatOverlay() {
       try {
         renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       } catch {
+        setHasCatFailed(true);
         return;
       }
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile() ? 1.5 : 2));
@@ -67,15 +75,25 @@ export default function GrayCatOverlay() {
       function speak(lineKind) {
         let lineList = grayCatLines[lineKind];
         if (lineKind === "chatter") {
-          lineList = Math.random() < 0.08 ? grayCatLines.name : [...grayCatLines.idle, ...(grayCatLines[currentSection] || grayCatLines.hero)];
+          const roll = Math.random();
+          lineList = roll < 0.08 ? grayCatLines.name : roll < 0.28 ? grayCatLines.chatHint : [...grayCatLines.idle, ...(grayCatLines[currentSection] || grayCatLines.hero)];
         }
+        // While the chat is open the cat talks in the panel, not in the bubble
+        if (isChatOpenRef.current) return;
         const freshLineList = lineList.filter(line => line !== lastSpokenLine);
-        lastSpokenLine = pickRandom(freshLineList.length > 0 ? freshLineList : lineList);
-        bubble.textContent = lastSpokenLine;
-        bubbleSecondsLeft = lineKind === "chase" ? 1.6 : 2.8;
+        showLine(pickRandom(freshLineList.length > 0 ? freshLineList : lineList), lineKind === "chase" ? 1.6 : 2.8);
+      }
+      function showLine(line, seconds) {
+        lastSpokenLine = line;
+        bubble.textContent = line;
+        bubbleSecondsLeft = seconds;
         bubble.style.opacity = "1";
         bubble.style.transform = "none";
       }
+      sayRef.current = line => {
+        if (behaviourRef.current) behaviourRef.current.state.hopAmount = 1;
+        showLine(line, 3.2);
+      };
 
       const behaviour = createGrayCatBehaviour({
         viewportWidth, viewportHeight, isMobile: isMobile(), isCalm: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -111,13 +129,7 @@ export default function GrayCatOverlay() {
         pointerY = event.clientY;
         hasMousePointer = event.pointerType === "mouse";
       }
-      function handlePageClick(event) {
-        if (event.target.closest("a, button, input, textarea, label, select")) return;
-        const { x, y } = behaviour.state;
-        if (Math.abs(event.clientX - x) < catHeight() * 0.65 && event.clientY < y + 10 && event.clientY > y - catHeight() - 10) behaviour.handleCatClick();
-      }
       window.addEventListener("pointermove", handlePointerMove, { passive: true });
-      window.addEventListener("click", handlePageClick);
 
       let catYaw = yawByFaceDirection.front;
       let walkPhase = 0;
@@ -170,6 +182,15 @@ export default function GrayCatOverlay() {
           mouseModel.mouseTail.rotation.y = Math.sin(mouse.elapsed * 20) * 0.4;
         }
 
+        // The invisible chat button sits exactly over the cat wherever she goes
+        const catButton = catButtonRef.current;
+        if (catButton) {
+          const buttonWidth = catHeight() * 1.1;
+          catButton.style.width = `${buttonWidth}px`;
+          catButton.style.height = `${catHeight()}px`;
+          catButton.style.transform = `translate(${state.x - buttonWidth / 2}px, ${state.y - hopHeight - catHeight()}px)`;
+        }
+
         if (bubbleSecondsLeft > 0) {
           bubbleSecondsLeft -= deltaSeconds;
           const bubbleWidth = bubble.offsetWidth;
@@ -189,13 +210,14 @@ export default function GrayCatOverlay() {
       }
       document.addEventListener("visibilitychange", handleVisibilityChange);
       animationFrameId = requestAnimationFrame(renderFrame);
-      setTimeout(() => speak("hero"), document.documentElement.classList.contains("is-loading") ? 3200 : 900);
+      const firstLineDelay = document.documentElement.classList.contains("is-loading") ? 3200 : 900;
+      setTimeout(() => speak("hero"), firstLineDelay);
+      setTimeout(() => speak("chatHint"), firstLineDelay + 7000);
 
       cleanUpScene = () => {
         cancelAnimationFrame(animationFrameId);
         window.removeEventListener("resize", resizeScene);
         window.removeEventListener("pointermove", handlePointerMove);
-        window.removeEventListener("click", handlePageClick);
         document.removeEventListener("visibilitychange", handleVisibilityChange);
         sectionObserver.disconnect();
         voxelBuilder.disposeAll();
@@ -217,17 +239,35 @@ export default function GrayCatOverlay() {
   }
 
   // While the chat is open Simbha sits still in his corner under the panel; closing it only wakes him if the chat paused him
-  function handleChatOpenChange(isChatOpen) {
+  function openChat() {
+    // After too many questions Simbha is "asleep": the chat stays shut and he brushes the visitor off in his bubble
+    if (isSimbhaSleeping()) {
+      sayRef.current(simbhaChat.stillSleepingLine);
+      return;
+    }
     const behaviour = behaviourRef.current;
-    if (!behaviour) return;
-    if (isChatOpen && !isPaused) {
-      behaviour.pause();
-      isPausedForChatRef.current = true;
-    } else if (!isChatOpen && isPausedForChatRef.current) {
+    if (behaviour) {
+      behaviour.state.hopAmount = 1;
+      if (!isPaused) {
+        behaviour.pause();
+        isPausedForChatRef.current = true;
+      }
+    }
+    if (bubbleRef.current) bubbleRef.current.style.opacity = "0";
+    isChatOpenRef.current = true;
+    setIsChatOpen(true);
+  }
+
+  const closeChat = useCallback(() => {
+    const behaviour = behaviourRef.current;
+    if (behaviour && isPausedForChatRef.current) {
       behaviour.resume();
       isPausedForChatRef.current = false;
     }
-  }
+    isChatOpenRef.current = false;
+    setIsChatOpen(false);
+    requestAnimationFrame(() => catButtonRef.current?.focus());
+  }, []);
 
   return (
     <>
@@ -245,7 +285,29 @@ export default function GrayCatOverlay() {
       >
         {isPaused ? "Let the cat roam" : "Pause cat"}
       </button>
-      <SimbhaChat onOpenChange={handleChatOpenChange} />
+      {hasCatFailed ? (
+        <button
+          ref={catButtonRef}
+          type="button"
+          onClick={() => (isChatOpen ? closeChat() : openChat())}
+          aria-expanded={isChatOpen}
+          aria-controls="simbha-chat-panel"
+          className="fixed bottom-4 right-4 z-[17] min-h-11 rounded-full bg-blue px-4 font-mono text-[13px] text-white hover:bg-blue-d"
+        >
+          {simbhaChat.fallbackButtonLabel}
+        </button>
+      ) : (
+        <button
+          ref={catButtonRef}
+          type="button"
+          onClick={() => (isChatOpen ? closeChat() : openChat())}
+          aria-label={simbhaChat.catButtonLabel}
+          aria-expanded={isChatOpen}
+          aria-controls="simbha-chat-panel"
+          className="fixed left-0 top-0 z-[16] cursor-pointer rounded-[24px] bg-transparent focus-visible:outline-blue"
+        />
+      )}
+      <SimbhaChat isOpen={isChatOpen} onClose={closeChat} />
     </>
   );
 }

@@ -178,7 +178,8 @@ export const footerNote = "Built with Next.js. Gray cat approved.";
 
 export const grayCatLines = {
   idle: ["Don’t mind me. Just supervising.", "I reviewed his code. Mostly fine.", "Your cursor looks tasty.", "brb, knocking something off a desk.", "Mrrp.", "Is it dinner time yet?", "Scroll faster. I’m bored.", "I could do his job. I just don’t want to.", "Don’t look at me. Look at his projects.", "I’d hire him. He feeds me on time."],
-  hero: ["Hi. I’m the gray cat. He works for me.", "Head of QA, reporting for duty."],
+  hero: ["Hi. I’m the gray cat. He works for me.", "Head of QA, reporting for duty.", "Click me. I know things about him."],
+  chatHint: ["Click me. I know everything about him.", "Psst. Click me. Ask me anything.", "Got questions? I’m the expert. Click."],
   work: ["jobscout? I helped. I sat on the keyboard.", "Skin Care AI says my fur is perfect.", "This page loads fast. I checked."],
   experience: ["Health Score: mine is 10 out of 10.", "He works on Health Score. I work on the sofa."],
   about: ["He walks hills on weekends. I nap. Balance.", "Fact: I’m the better developer."],
@@ -194,15 +195,33 @@ export const grayCatLines = {
 };
 
 export const simbhaChat = {
-  openButtonLabel: "Ask Simbha",
-  title: "Ask Simbha",
-  subtitle: "I know everything about him. Unfortunately.",
-  greeting: "What do you want to know about Pranav? Make it quick, I have a nap scheduled.",
+  catButtonLabel: "Chat with Simbha the cat about Pranav",
+  fallbackButtonLabel: "Chat with Simbha",
+  title: "Simbha",
+  subtitle: "Head of QA. Knows everything about his human.",
+  greeting: "Oh! A visitor! You may ask ME, the magnificent Simbha, anything about my human. Go on, I'm busy being fabulous.",
   inputLabel: "Your question for Simbha",
   inputPlaceholder: "Ask about his work, skills, projects...",
   sendLabel: "Send",
   closeLabel: "Close",
   suggestedQuestionList: ["What has he built?", "What’s his tech stack?", "Can I hire him?"],
   thinkingLine: "Simbha is thinking...",
+  tooManyQuestionsLineList: [
+    "Chill out, dude! My human is already broke. Keep chatting and he'll be homeless.",
+    "Don't you have anyone else to talk to? You've got way too much free time.",
+    "Stop eating my brain! Get to the point, or I'm going to sleep.",
+  ],
+  goingToSleepLine: "You know what? I'm going to sleep. You've got nothing else to do, but I've got shit to do.",
+  stillSleepingLine: "Get lost, man. Come back after some time.",
+  startOverLabel: "Start over",
+  startOverLineList: [
+    "Uhhh, a new conversation? With YOU again? Tsk. Fine, what do you want? Make it quick.",
+    "Ugh, starting over? Tsk tsk. Go on then, and keep it short this time.",
+    "Uhhh, fresh start? You again. What is it now? Quick, my nap is waiting.",
+    "New conversation, huh? Tsk. Spit it out, and make it snappy this time.",
+    "Uhhh, we're doing this AGAIN? Fine. What do you want? The clock's ticking.",
+    "Tsk. Starting over won't make you more interesting. What now? Be quick.",
+    "Oh great, round two. Tsk. Ask your thing, and this time get to the point.",
+  ],
   nappingLine: "Simbha is napping. Try again in a bit.",
 };

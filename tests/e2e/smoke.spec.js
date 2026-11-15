@@ -5,9 +5,9 @@ test('home page responds', async ({ page }) => {
   expect(response.status()).toBe(200);
 });
 
-test('Ask Simbha opens the chat panel', async ({ page }) => {
+test('clicking the cat opens the chat panel', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Ask Simbha' }).click();
-  await expect(page.getByRole('dialog', { name: 'Ask Simbha' })).toBeVisible();
+  await page.getByRole('button', { name: /chat with simbha/i }).first().click();
+  await expect(page.getByRole('dialog', { name: 'Chat with Simbha' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'What has he built?' })).toBeVisible();
 });

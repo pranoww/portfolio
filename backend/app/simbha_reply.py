@@ -1,13 +1,13 @@
 # The only file that talks to a language model. Groq's free tier while developing; Claude Haiku on the live site.
-# settings.py refuses to start with the Claude provider anywhere except the Vercel deployment.
+# Claude only ever runs on the Vercel production deployment (see settings.is_paid_model_blocked); everywhere else Simbha naps.
 from collections.abc import Iterator
 
 from app.settings import settings
 
 refusal_line = "Not answering that. Ask me about Pranav instead."
 cut_off_line = " ...anyway."
-# Simbha answers in 1-4 sentences; this cap only stops a runaway reply from costing more
-max_reply_tokens = 400
+# Simbha answers in 1-2 short sentences (about 50 tokens); this cap stops a runaway reply from costing more
+max_reply_tokens = 150
 
 
 def stream_reply(system_prompt: str, message_list: list[dict]) -> Iterator[str]:

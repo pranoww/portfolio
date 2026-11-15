@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     anthropic_api_key: SecretStr = SecretStr("")
     anthropic_model: str = "claude-haiku-5-5"
     groq_api_key: SecretStr = SecretStr("")
-    groq_model: str = "openai/gpt-oss-20b"
+    groq_model: str = "openai/gpt-oss-120b"
     voyage_api_key: SecretStr = SecretStr("")
     voyage_model: str = "voyage-4-lite"
     # Spending guards: a kill switch, per-visitor limits, and one cap for the whole site per day
