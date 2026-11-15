@@ -70,7 +70,7 @@ export default function SimbhaChat({ isOpen, onClose }) {
     inputRef.current?.focus();
   }
 
-  // Questions 10 and 11 get fixed attitude lines from Simbha himself, with no request to the backend at all
+  // The warning and sleep questions (14 and 15) get fixed attitude lines from Simbha himself, with no request to the backend
   function replyWithAttitude(question, line, shouldGoToSleep) {
     setDraft("");
     setMessageList(previous => [...previous, { role: "user", content: question }, { role: "assistant", content: line, isCanned: true }]);

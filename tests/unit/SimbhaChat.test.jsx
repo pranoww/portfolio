@@ -74,7 +74,9 @@ test('an empty reply shows the napping line instead of thinking forever', async 
   expect(await screen.findByText('Simbha is napping. Try again in a bit.')).toBeInTheDocument();
 });
 
-test('question 10 gets an attitude line and question 11 sends Simbha to sleep, both without calling the backend', async () => {
+test('the warning question gets an attitude line and the next one sends Simbha to sleep, both without calling the backend', async () => {
+  const { warningQuestionNumber } = await import('@/components/cat/simbhaChatLimit');
+  const answeredCount = warningQuestionNumber - 1;
   const fetchMock = mockSimbhaApi(streamedResponse(['Mrrp.']));
   const onClose = vi.fn();
   render(<SimbhaChat isOpen onClose={onClose} />);
@@ -84,19 +86,19 @@ test('question 10 gets an attitude line and question 11 sends Simbha to sleep, b
     await waitFor(() => expect(screen.getByRole('button', { name: 'Send' })).toBeEnabled());
     fireEvent.click(screen.getByRole('button', { name: 'Send' }));
   };
-  for (let index = 1; index <= 9; index++) {
+  for (let index = 1; index <= answeredCount; index++) {
     fetchMock.mockImplementationOnce(() => Promise.resolve(streamedResponse([`Answer ${index}.`])));
     await ask(`question ${index}`);
     await screen.findByText(`Answer ${index}.`);
   }
-  expect(fetchMock).toHaveBeenCalledTimes(9);
+  expect(fetchMock).toHaveBeenCalledTimes(answeredCount);
 
-  await ask('question 10');
+  await ask('the warning question');
   expect(await screen.findByText(/Chill out, dude|anyone else to talk to|Stop eating my brain/)).toBeInTheDocument();
-  await ask('question 11');
+  await ask('one more');
   const { simbhaChat: chatCopy } = await import('@/content/siteContent');
   expect(await screen.findByText(chatCopy.goingToSleepLine)).toBeInTheDocument();
-  expect(fetchMock).toHaveBeenCalledTimes(9);
+  expect(fetchMock).toHaveBeenCalledTimes(answeredCount);
   await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1), { timeout: 4000 });
 });
 
