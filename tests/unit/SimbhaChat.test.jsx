@@ -78,8 +78,10 @@ test('question 10 gets an attitude line and question 11 sends Simbha to sleep, b
   const fetchMock = mockSimbhaApi(streamedResponse(['Mrrp.']));
   const onClose = vi.fn();
   render(<SimbhaChat isOpen onClose={onClose} />);
+  // Like a real visitor: type, then wait until Send is enabled (it stays disabled while the last answer finishes)
   const ask = async text => {
     fireEvent.change(screen.getByLabelText('Your question for Simbha'), { target: { value: text } });
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Send' })).toBeEnabled());
     fireEvent.click(screen.getByRole('button', { name: 'Send' }));
   };
   for (let index = 1; index <= 9; index++) {
@@ -92,7 +94,8 @@ test('question 10 gets an attitude line and question 11 sends Simbha to sleep, b
   await ask('question 10');
   expect(await screen.findByText(/Chill out, dude|anyone else to talk to|Stop eating my brain/)).toBeInTheDocument();
   await ask('question 11');
-  expect(await screen.findByText(/I'm going to sleep/)).toBeInTheDocument();
+  const { simbhaChat: chatCopy } = await import('@/content/siteContent');
+  expect(await screen.findByText(chatCopy.goingToSleepLine)).toBeInTheDocument();
   expect(fetchMock).toHaveBeenCalledTimes(9);
   await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1), { timeout: 4000 });
 });

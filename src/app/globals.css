@@ -10,6 +10,8 @@
   --blue: #1a2ffb;
   --blue-d: #0016ec;
   --lime: #c1ff00;
+  --fur: #dcdce1;
+  --fur-d: #cfd0d6;
   --header-height: 68px;
 }
 
@@ -22,6 +24,8 @@
   --color-blue: var(--blue);
   --color-blue-d: var(--blue-d);
   --color-lime: var(--lime);
+  --color-fur: var(--fur);
+  --color-fur-d: var(--fur-d);
   --font-display: var(--font-host-grotesk);
   --font-mono: var(--font-plex-mono);
   --radius-card: 18px;

@@ -12,9 +12,10 @@ const simbhaApiUrl = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:800
 // The backend accepts the last 6 exchanges; older ones are left out
 const maxHistoryMessages = 12;
 
-// Electric blue panel: Simbha talks in lime, the visitor in white. Focus rings turn lime so they show on the blue.
-const fieldClassName = "min-h-11 w-full rounded-[10px] border-2 border-transparent bg-white px-3.5 py-2.5 text-base text-ink outline-none transition placeholder:text-ink-2/70 focus:border-lime";
-const smallButtonClassName = "inline-flex min-h-11 items-center justify-center rounded-full px-4 font-mono text-[13px] transition duration-200 active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-lime";
+// Fur-grey panel (the cat's colour): Simbha talks in white, the visitor in the site's lime, header buttons in the site blue
+const fieldClassName = "min-h-11 w-full rounded-[10px] border-2 border-transparent bg-white px-3.5 py-2.5 text-base text-ink outline-none transition placeholder:text-ink-2/70 focus:border-blue";
+const smallButtonClassName = "inline-flex min-h-11 items-center justify-center rounded-full px-4 font-mono text-[13px] transition duration-200 active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-50";
+const headerButtonClassName = `${smallButtonClassName} min-h-10 px-3.5 bg-blue text-white hover:bg-blue-d`;
 
 // Errors Simbha may show as they are; anything else (network, timeout) becomes the napping line
 class SimbhaError extends Error {}
@@ -125,32 +126,32 @@ export default function SimbhaChat({ isOpen, onClose }) {
       id="simbha-chat-panel"
       role="dialog"
       aria-label={`Chat with ${simbhaChat.title}`}
-      className="fixed inset-x-2 bottom-[150px] z-[18] flex max-h-[min(560px,calc(100dvh-150px-var(--header-height)-12px))] sm:max-h-[min(560px,calc(100dvh-230px-var(--header-height)-12px))] flex-col overflow-hidden rounded-card bg-blue text-white shadow-[0_22px_60px_-24px_rgba(0,22,236,.65)] motion-safe:animate-[fade-slide-in_.2s_ease-out] sm:inset-x-auto sm:right-4 sm:bottom-[230px] sm:w-[390px]"
+      className="fixed inset-x-2 bottom-[150px] z-[18] flex max-h-[min(560px,calc(100dvh-150px-var(--header-height)-12px))] sm:max-h-[min(560px,calc(100dvh-230px-var(--header-height)-12px))] flex-col overflow-hidden rounded-card bg-fur text-ink shadow-[0_22px_50px_-22px_rgba(0,0,0,.35)] motion-safe:animate-[fade-slide-in_.2s_ease-out] sm:inset-x-auto sm:right-4 sm:bottom-[230px] sm:w-[390px]"
     >
       <header className="flex shrink-0 items-start justify-between gap-3 px-4 pb-3 pt-4">
         <div>
           <h2 className="font-display text-xl font-extrabold leading-tight">{simbhaChat.title}</h2>
-          <p className="text-sm text-white/85">{simbhaChat.subtitle}</p>
+          <p className="text-sm text-ink-2">{simbhaChat.subtitle}</p>
         </div>
-        <div className="-mr-2 flex shrink-0">
+        <div className="flex shrink-0 gap-2">
           {messageList.length > 0 && (
-            <button type="button" onClick={startOver} disabled={isWaiting} className={`${smallButtonClassName} px-3 text-white hover:bg-white/15`}>
+            <button type="button" onClick={startOver} disabled={isWaiting} className={headerButtonClassName}>
               {simbhaChat.startOverLabel}
             </button>
           )}
-          <button type="button" onClick={onClose} className={`${smallButtonClassName} px-3 text-white hover:bg-white/15`}>
+          <button type="button" onClick={onClose} className={headerButtonClassName}>
             {simbhaChat.closeLabel}
           </button>
         </div>
       </header>
 
       <div ref={messageListRef} aria-live="polite" data-lenis-prevent className="flex min-h-[120px] flex-1 flex-col gap-2.5 overflow-y-auto overscroll-contain px-4 pb-4">
-        <p className="max-w-[88%] self-start rounded-[14px_14px_14px_4px] bg-lime px-3.5 py-2.5 font-mono text-[13px] leading-snug text-ink">{openingLine}</p>
+        <p className="max-w-[88%] self-start rounded-[14px_14px_14px_4px] bg-white px-3.5 py-2.5 font-mono text-[13px] leading-snug text-ink">{openingLine}</p>
         {messageList.map((message, index) => (
           message.role === "user" ? (
-            <p key={index} className="max-w-[85%] self-end rounded-[14px_14px_4px_14px] bg-white px-3.5 py-2.5 text-[15px] leading-snug text-ink">{message.content}</p>
+            <p key={index} className="max-w-[85%] self-end rounded-[14px_14px_4px_14px] bg-lime px-3.5 py-2.5 text-[15px] leading-snug text-ink">{message.content}</p>
           ) : (
-            <p key={index} className={`max-w-[88%] self-start whitespace-pre-line rounded-[14px_14px_14px_4px] px-3.5 py-2.5 font-mono text-[13px] leading-snug ${message.isError ? "border border-white/50 text-white" : "bg-lime text-ink"}`}>
+            <p key={index} className={`max-w-[88%] self-start whitespace-pre-line rounded-[14px_14px_14px_4px] px-3.5 py-2.5 font-mono text-[13px] leading-snug ${message.isError ? "border border-ink/25 text-ink-2" : "bg-white text-ink"}`}>
               {message.content || <span className="opacity-70">{simbhaChat.thinkingLine}</span>}
             </p>
           )
@@ -158,7 +159,7 @@ export default function SimbhaChat({ isOpen, onClose }) {
         {messageList.length === 0 && (
           <div className="mt-1 flex flex-wrap gap-2">
             {simbhaChat.suggestedQuestionList.map(question => (
-              <button key={question} type="button" onClick={() => sendQuestion(question)} className={`${smallButtonClassName} border border-white/50 text-white hover:border-lime hover:bg-white/10`}>
+              <button key={question} type="button" onClick={() => sendQuestion(question)} className={`${smallButtonClassName} border border-[#9a9ca8] text-ink hover:border-ink hover:bg-white/60`}>
                 {question}
               </button>
             ))}
@@ -166,7 +167,7 @@ export default function SimbhaChat({ isOpen, onClose }) {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex shrink-0 gap-2 bg-blue-d p-3">
+      <form onSubmit={handleSubmit} className="flex shrink-0 gap-2 bg-fur-d p-3">
         <label htmlFor="simbha-question" className="sr-only">{simbhaChat.inputLabel}</label>
         <input
           ref={inputRef}
@@ -178,7 +179,7 @@ export default function SimbhaChat({ isOpen, onClose }) {
           placeholder={simbhaChat.inputPlaceholder}
           className={fieldClassName}
         />
-        <button type="submit" disabled={isWaiting || !draft.trim()} className={`${smallButtonClassName} shrink-0 bg-lime font-semibold text-ink hover:bg-white`}>
+        <button type="submit" disabled={isWaiting || !draft.trim()} className={`${smallButtonClassName} shrink-0 bg-lime font-semibold text-ink hover:bg-ink hover:text-lime`}>
           {simbhaChat.sendLabel}
         </button>
       </form>
