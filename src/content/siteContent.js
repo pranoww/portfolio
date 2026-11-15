@@ -192,3 +192,17 @@ export const grayCatLines = {
   exit: ["Be right back.", "Off to inspect the footer.", "Gotta check something."],
   name: ["Name’s Simbha, by the way.", "Simbha. Remember it."],
 };
+
+export const simbhaChat = {
+  openButtonLabel: "Ask Simbha",
+  title: "Ask Simbha",
+  subtitle: "I know everything about him. Unfortunately.",
+  greeting: "What do you want to know about Pranav? Make it quick, I have a nap scheduled.",
+  inputLabel: "Your question for Simbha",
+  inputPlaceholder: "Ask about his work, skills, projects...",
+  sendLabel: "Send",
+  closeLabel: "Close",
+  suggestedQuestionList: ["What has he built?", "What’s his tech stack?", "Can I hire him?"],
+  thinkingLine: "Simbha is thinking...",
+  nappingLine: "Simbha is napping. Try again in a bit.",
+};

@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.contact_routes import contact_router
 from app.database import connection_pool, open_database
 from app.settings import settings
+from app.simbha_routes import simbha_router
 
 
 @asynccontextmanager
@@ -24,6 +25,7 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 app.include_router(contact_router, prefix="/api")
+app.include_router(simbha_router, prefix="/api")
 
 
 @app.get("/api/health")

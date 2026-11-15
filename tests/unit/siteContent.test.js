@@ -9,8 +9,9 @@ test('room objects follow the dot order', () => {
   expect(siteContent.roomObjectList.map(roomObject => roomObject.label)).toEqual(['Based in', 'Day job', 'Learning now', 'Studied', 'Weekends', 'Cat bed']);
 });
 
-test('the cat name only appears in the rare name lines', () => {
-  const { grayCatLines, ...everythingElse } = siteContent;
+test('the cat name only appears in the rare name lines and his own chat', () => {
+  const { grayCatLines, simbhaChat, ...everythingElse } = siteContent;
+  expect(simbhaChat.title).toMatch(/Simbha/);
   const { name: nameLines, ...otherLines } = grayCatLines;
   expect(JSON.stringify(everythingElse)).not.toMatch(/Simbha/);
   expect(JSON.stringify(otherLines)).not.toMatch(/Simbha/);

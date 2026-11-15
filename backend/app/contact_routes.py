@@ -1,12 +1,11 @@
 # POST /contact: drops honeypot spam, limits messages per visitor, saves the message to Postgres and emails it on
-import hashlib
-
 from fastapi import APIRouter, HTTPException, Request, status
 
 from app.contact_email import send_contact_email
 from app.contact_schema import ContactMessage
 from app.database import connection_pool
 from app.settings import settings
+from app.visitor_ip import hash_visitor_ip
 
 contact_router = APIRouter()
 
@@ -16,10 +15,7 @@ def create_contact_message(contact_message: ContactMessage, request: Request):
     if contact_message.website:
         return {"status": "received"}
 
-    # On Vercel the visitor's address arrives in a header Vercel sets itself; elsewhere use the direct connection
-    vercel_forwarded_ip = request.headers.get("x-vercel-forwarded-for", "").split(",")[0].strip()
-    sender_ip = (settings.vercel and vercel_forwarded_ip) or (request.client.host if request.client else "unknown")
-    sender_ip_hash = hashlib.sha256(f"{settings.ip_hash_salt}{sender_ip}".encode()).hexdigest()
+    sender_ip_hash = hash_visitor_ip(request)
 
     with connection_pool.connection() as connection:
         recent_message_count = connection.execute(

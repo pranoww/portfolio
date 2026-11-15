@@ -3,6 +3,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { grayCatLines } from "@/content/siteContent";
+import SimbhaChat from "@/components/cat/SimbhaChat";
 
 const yawByFaceDirection = { front: -Math.PI / 2, right: 0, left: Math.PI };
 const sectionIdList = ["work", "build", "experience", "about", "contact"];
@@ -15,6 +16,7 @@ export default function GrayCatOverlay() {
   const bubbleRef = useRef(null);
   const behaviourRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
+  const isPausedForChatRef = useRef(false);
 
   useEffect(() => {
     let isUnmounted = false;
@@ -209,8 +211,22 @@ export default function GrayCatOverlay() {
   function handlePauseClick() {
     const behaviour = behaviourRef.current;
     if (!behaviour) return;
+    isPausedForChatRef.current = false;
     if (isPaused) behaviour.resume(); else behaviour.pause();
     setIsPaused(!isPaused);
+  }
+
+  // While the chat is open Simbha sits still in his corner under the panel; closing it only wakes him if the chat paused him
+  function handleChatOpenChange(isChatOpen) {
+    const behaviour = behaviourRef.current;
+    if (!behaviour) return;
+    if (isChatOpen && !isPaused) {
+      behaviour.pause();
+      isPausedForChatRef.current = true;
+    } else if (!isChatOpen && isPausedForChatRef.current) {
+      behaviour.resume();
+      isPausedForChatRef.current = false;
+    }
   }
 
   return (
@@ -229,6 +245,7 @@ export default function GrayCatOverlay() {
       >
         {isPaused ? "Let the cat roam" : "Pause cat"}
       </button>
+      <SimbhaChat onOpenChange={handleChatOpenChange} />
     </>
   );
 }
