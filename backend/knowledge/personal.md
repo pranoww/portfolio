@@ -30,3 +30,11 @@ He usually sleeps about 6 to 7 hours. He once had a cold with a runny nose, coug
 # Hobbies
 
 He loves treks and hill trails around Mumbai. He drives a Bolero Neo.
+
+# Favourites
+
+- Food: biryani, or anything with chicken in it.
+- Music: lots of it, no single favourite.
+- Shows: anime, especially One Piece, Naruto, Bleach and Toradora.
+- Games: CS2 and Brawl Stars.
+- Favourite trek: Rajmachi.

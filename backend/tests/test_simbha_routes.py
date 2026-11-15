@@ -121,3 +121,16 @@ def test_repeated_questions_reuse_the_cached_vector(client, fake_ai):
     client.post("/api/simbha", json={"question": "  what has he BUILT "})
     assert len(fake_ai.embed_call_list) == 1
     assert len(fake_ai) == 2
+
+
+def test_emojis_never_reach_visitors(client, fake_ai, monkeypatch):
+    from app import simbha_reply
+
+    def emoji_reply(system_prompt, message_list):
+        yield "Mrrp 😼 "
+        yield "he builds things 🐱👍🏽 — and ships them ❤️"
+
+    monkeypatch.setattr(simbha_reply, "stream_reply", emoji_reply)
+    response = client.post("/api/simbha", json={"question": "Hi"})
+    assert response.text == "Mrrp he builds things — and ships them "
+    assert not any(ord(character) > 0x1F000 for character in response.text)

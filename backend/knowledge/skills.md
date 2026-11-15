@@ -39,3 +39,12 @@ The quiet fixes that make a page open fast and get found on Google. Done at One 
 # Learning now
 
 RAG, vector search and LangGraph: building AI agents that can actually be trusted.
+
+# His tech opinions
+
+- Python is his favourite backend language: readable, a huge ecosystem, and great for automation, data processing and AI.
+- FastAPI is his go-to Python framework: async support, automatic API docs, Pydantic validation and type hints make building APIs clean.
+- For his own Next.js projects he prefers plain JavaScript and JSX over TypeScript, to keep his workflow straightforward without the extra type-system overhead.
+- Next.js is his favourite frontend framework, for its App Router, routing, server-side features and React integration.
+- PostgreSQL is his favourite database: reliable, properly relational and easy to extend (like pgvector for AI search).
+- In AI he is most into RAG, vector databases, pgvector, Voyage AI, LangChain, LLM integrations, AI agents and smart automation.

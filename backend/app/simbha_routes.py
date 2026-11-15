@@ -1,6 +1,7 @@
 # POST /simbha: guards spending (kill switch, site-only origin, per-visitor and site-wide limits),
 # looks up the relevant facts about Pranav and streams Simbha's reply as plain text
 import logging
+import re
 from urllib.parse import urlsplit
 
 from fastapi import APIRouter, HTTPException, Request, status
@@ -16,6 +17,10 @@ from app.visitor_ip import hash_visitor_ip
 simbha_router = APIRouter()
 logger = logging.getLogger(__name__)
 napping_line = "Simbha is napping. Try again in a bit."
+# Emoji and pictograph code points (faces, cats, hearts, flags, symbols) plus the joiners and variation marks that glue them
+emoji_pattern = re.compile(
+    "[\U0001F000-\U0001FAFF\U00002600-\U000027BF\U0001F1E6-\U0001F1FF\U00002B00-\U00002BFF\U0000FE0F\U0000200D\U000020E3]"
+)
 # Any fixed number works: it lets one request at a time check and record the limits
 limits_lock_id = 7_401_355
 
@@ -82,7 +87,11 @@ def ask_simbha(simbha_question: SimbhaQuestion, request: Request):
 
     def reply_text():
         try:
-            yield from simbha_reply.stream_reply(system_prompt, message_list)
+            for text in simbha_reply.stream_reply(system_prompt, message_list):
+                # No emojis on the site, ever: whatever the model writes, they are stripped before visitors see it
+                cleaned_text = re.sub(r" {2,}", " ", emoji_pattern.sub("", text))
+                if cleaned_text:
+                    yield cleaned_text
         except Exception:
             logger.exception("Simbha's model call failed")
             yield napping_line
