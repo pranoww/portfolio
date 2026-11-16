@@ -28,7 +28,7 @@ The quiet fixes that make a page open fast and get found on Google. Done at One 
 - AI: RAG, embeddings, LangChain, LangGraph, Hugging Face, Google Gemini, Anthropic Claude, OpenAI models.
 - Tools: Docker, Git, Alembic.
 
-# How he likes to build
+# How Pranav likes to build
 
 - Python with FastAPI is his favourite backend; PostgreSQL his favourite database.
 - Next.js with plain JavaScript rather than TypeScript, and Tailwind CSS.
@@ -40,7 +40,7 @@ The quiet fixes that make a page open fast and get found on Google. Done at One 
 
 RAG, vector search and LangGraph: building AI agents that can actually be trusted.
 
-# His tech opinions
+# Pranav's tech opinions
 
 - Python is his favourite backend language: readable, a huge ecosystem, and great for automation, data processing and AI.
 - FastAPI is his go-to Python framework: async support, automatic API docs, Pydantic validation and type hints make building APIs clean.

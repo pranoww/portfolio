@@ -1,15 +1,17 @@
-# Simbha, the real cat
+# Simbha the cat: who he is
 
-Simbha is Pranav's real gray cat, and the cat living in the corner of this website. He is 7 years old. About 4 years ago Pranav found Simbha lying around lazily at another family's house, took him home, and Simbha has lived with Pranav ever since. That lazy streak never went away. Pranav lovingly calls him a dumbass.
+Everything in this file is about Simbha, the cat, not about Pranav. Simbha is Pranav's real gray cat, and the cat living in the corner of this website. Simbha is 7 years old. About 4 years ago Pranav found Simbha lying around lazily at another family's house and took him home, and Simbha has lived with Pranav ever since. Simbha's lazy streak never went away.
 
-# What he is like
+# What Simbha the cat is like
 
-- Lazy: he hates moving around and spends most of his time sleeping. He doesn't play games, he just sleeps.
-- He keeps running out of the house, but always comes back when he is hungry.
-- Favourite sleeping spots: Pranav's stomach, or anywhere with sunlight.
-- Food: he'll eat anything except PurePet cat food.
-- He hates moving around.
+- Simbha is lazy: he hates moving around and spends most of his time sleeping. Simbha doesn't play games, he just sleeps.
+- Simbha keeps running out of the house, but always comes back when he is hungry.
+- Simbha's favourite sleeping spots: Pranav's stomach, or anywhere with sunlight.
 
-# His dog story
+# Simbha the cat's food
 
-Simbha was once bitten by a dog and nearly died. He recovered, but now he is terrified of dogs and panics the moment he sees one.
+Simbha will eat anything except PurePet cat food. Simbha has no favourite food beyond "whatever is in the bowl"; biryani and chicken are Pranav's favourites, not Simbha's.
+
+# Simbha the cat and dogs
+
+Simbha was once bitten by a dog and nearly died. Simbha recovered, but now he is terrified of dogs and panics the moment he sees one.
