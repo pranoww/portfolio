@@ -61,7 +61,8 @@ export default function GrayCatOverlay() {
         setHasCatFailed(true);
         return;
       }
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile() ? 1.5 : 2));
+      // Flat-coloured voxels look the same at 1.5x as at 2x, for under 60% of the pixels to draw
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
@@ -152,8 +153,12 @@ export default function GrayCatOverlay() {
         viewportWidth = window.innerWidth;
         viewportHeight = window.innerHeight;
         voxelSize = (isMobile() ? 118 : 200) / 17;
-        renderer.setSize(viewportWidth, viewportHeight, false);
-        Object.assign(camera, { left: 0, right: viewportWidth, top: 0, bottom: -viewportHeight });
+        // She only ever moves along the bottom of the screen (walks, hops, jumps of up to ~110px), so the canvas is just
+        // that strip: drawing a full-screen see-through canvas every frame is what made high-density screens like Macs lag
+        const stripHeight = Math.min(viewportHeight, Math.ceil(catHeight() * 1.4 + 154));
+        canvas.style.height = `${stripHeight}px`;
+        renderer.setSize(viewportWidth, stripHeight, false);
+        Object.assign(camera, { left: 0, right: viewportWidth, top: -(viewportHeight - stripHeight), bottom: -viewportHeight });
         camera.updateProjectionMatrix();
         cat.catRoot.scale.setScalar(voxelSize);
         mouseModel.mouseRoot.scale.setScalar(voxelSize * 0.85);
@@ -183,6 +188,8 @@ export default function GrayCatOverlay() {
       let secondsUntilBlink = 2.5;
       let previousTime = performance.now();
       let animationFrameId = 0;
+      let wasOffScreen = false;
+      let lastDrawTime = 0;
 
       function renderFrame(now) {
         const deltaSeconds = Math.min(0.05, Math.max(0, (now - previousTime) / 1000));
@@ -302,7 +309,16 @@ export default function GrayCatOverlay() {
           if (bubbleSecondsLeft <= 0) { bubble.style.opacity = "0"; bubble.style.transform = "translateY(6px)"; }
         }
 
-        renderer.render(scene, camera);
+        // Off-screen with no mouse about: the last frame drawn is already empty, so there is nothing to redraw
+        // and on 120Hz-and-up screens (most recent MacBooks) every other frame is skipped, plenty for a walking cat;
+        // 60-100Hz screens draw every frame
+        const isOffScreen = state.mode === "away" && !mouse.isRunning;
+        const isTooSoon = now - lastDrawTime < 9;
+        if ((!isOffScreen || !wasOffScreen) && !isTooSoon) {
+          renderer.render(scene, camera);
+          lastDrawTime = now;
+          wasOffScreen = isOffScreen;
+        }
         animationFrameId = requestAnimationFrame(renderFrame);
       }
 
@@ -427,7 +443,7 @@ export default function GrayCatOverlay() {
 
   return (
     <>
-      <canvas ref={canvasRef} aria-hidden="true" className="pointer-events-none fixed inset-0 z-[15] h-screen w-screen" />
+      <canvas ref={canvasRef} aria-hidden="true" className="pointer-events-none fixed inset-x-0 bottom-0 z-[15] h-0 w-screen" />
       <div
         ref={bubbleRef}
         aria-live="polite"

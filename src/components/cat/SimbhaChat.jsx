@@ -51,7 +51,8 @@ export default function SimbhaChat({ isOpen, onClose, freshStart = null }) {
 
   useEffect(() => {
     if (!isOpen) return undefined;
-    inputRef.current?.focus();
+    // On touch screens focusing the box would pop the keyboard up over the panel before they've read anything
+    if (!window.matchMedia?.("(pointer: coarse)").matches) inputRef.current?.focus();
     const handleKeyDown = event => { if (event.key === "Escape") onClose(); };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -134,14 +135,14 @@ export default function SimbhaChat({ isOpen, onClose, freshStart = null }) {
       id="simbha-chat-panel"
       role="dialog"
       aria-label={`Chat with ${simbhaChat.title}`}
-      className="fixed inset-x-2 bottom-[150px] z-[18] flex max-h-[min(560px,calc(100dvh-150px-var(--header-height)-12px))] sm:max-h-[min(560px,calc(100dvh-230px-var(--header-height)-12px))] flex-col overflow-hidden rounded-card bg-fur text-ink shadow-[0_22px_50px_-22px_rgba(0,0,0,.35)] motion-safe:animate-[fade-slide-in_.2s_ease-out] sm:inset-x-auto sm:right-4 sm:bottom-[230px] sm:w-[390px]"
+      className="simbha-chat-panel fixed inset-x-2 z-[18] flex flex-col overflow-hidden rounded-card bg-fur text-ink shadow-[0_22px_50px_-22px_rgba(0,0,0,.35)] motion-safe:animate-[fade-slide-in_.2s_ease-out] sm:inset-x-auto sm:right-4 sm:w-[390px]"
     >
-      <header className="flex shrink-0 items-start justify-between gap-3 px-4 pb-3 pt-4">
-        <div>
-          <h2 className="font-display text-xl font-extrabold leading-tight">{simbhaChat.title}</h2>
-          <p className="text-sm text-ink-2">{simbhaChat.subtitle}</p>
-        </div>
-        <div className="flex shrink-0 gap-2">
+      {/* The subtitle gets its own full-width line so "Start over" can't squeeze it into a tall column on narrow phones;
+          on very short screens (phones held sideways) it is dropped to leave room for the conversation */}
+      <header className="grid shrink-0 grid-cols-[1fr_auto] items-start gap-x-3 px-4 pb-3 pt-4">
+        <h2 className="self-center font-display text-xl font-extrabold leading-tight">{simbhaChat.title}</h2>
+        <p className="col-span-2 row-start-2 mt-1 text-sm text-ink-2 [@media(max-height:480px)]:hidden">{simbhaChat.subtitle}</p>
+        <div className="col-start-2 row-start-1 flex shrink-0 gap-2">
           {messageList.length > 0 && (
             <button type="button" onClick={startOver} disabled={isWaiting} className={headerButtonClassName}>
               {simbhaChat.startOverLabel}
@@ -153,7 +154,7 @@ export default function SimbhaChat({ isOpen, onClose, freshStart = null }) {
         </div>
       </header>
 
-      <div ref={messageListRef} aria-live="polite" data-lenis-prevent className="flex min-h-[120px] flex-1 flex-col gap-2.5 overflow-y-auto overscroll-contain px-4 pb-4">
+      <div ref={messageListRef} aria-live="polite" data-lenis-prevent className="flex min-h-[100px] flex-1 flex-col [@media(max-height:480px)]:min-h-[64px] gap-2.5 overflow-y-auto overscroll-contain px-4 pb-4">
         <p className="max-w-[88%] self-start rounded-[14px_14px_14px_4px] bg-white px-3.5 py-2.5 font-mono text-[13px] leading-snug text-ink">{openingLine}</p>
         {messageList.map((message, index) => (
           message.role === "user" ? (

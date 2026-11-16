@@ -54,6 +54,9 @@ export default function AboutRoomCanvas() {
       renderer.toneMappingExposure = 1.05;
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      // The room stands still, so its shadows are drawn once and only redrawn while the mini Simbha moves in or out of his bed
+      renderer.shadowMap.autoUpdate = false;
+      renderer.shadowMap.needsUpdate = true;
 
       const scene = new THREE.Scene();
       const environmentGenerator = new THREE.PMREMGenerator(renderer);
@@ -122,6 +125,8 @@ export default function AboutRoomCanvas() {
       const flyEnd = { position: new THREE.Vector3(), target: new THREE.Vector3() };
       let flyProgress = 1;
       let highlightedIndex = -1;
+      // Nothing moves in the room most of the time, so a new frame is drawn only when something changed
+      let needsRender = true;
 
       flyToObjectRef.current = objectIndex => {
         setObjectHighlight(highlightedIndex, false);
@@ -133,12 +138,14 @@ export default function AboutRoomCanvas() {
         flyEnd.position.set(...pose.position);
         flyEnd.target.set(...pose.lookAt);
         flyProgress = 0;
+        needsRender = true;
       };
 
       function resizeScene() {
         const width = roomElement.clientWidth;
         const height = roomElement.clientHeight;
         renderer.setSize(width, height, false);
+        needsRender = true;
         camera.aspect = width / height;
         camera.fov = width < 520 ? 42 : 34;
         camera.updateProjectionMatrix();
@@ -180,7 +187,8 @@ export default function AboutRoomCanvas() {
       function renderFrame(now) {
         const deltaSeconds = Math.min(0.05, Math.max(0, (now - previousTime) / 1000));
         previousTime = now;
-        if (flyProgress < 1) {
+        const isFlying = flyProgress < 1;
+        if (isFlying) {
           flyProgress = Math.min(1, flyProgress + deltaSeconds / flyDurationSeconds);
           const easedProgress = easeInOut(flyProgress);
           cameraPosition.lerpVectors(flyStart.position, flyEnd.position, easedProgress);
@@ -188,16 +196,24 @@ export default function AboutRoomCanvas() {
         }
         camera.position.copy(cameraPosition);
         camera.lookAt(cameraTarget);
-        lampLight.intensity = 14 + Math.sin(now / 500) * 0.6;
 
         // Mini Simbha drops into the bed, breathes with a bubble on his nose, and hops back out when people look away
+        const previousBedCatProgress = bedCatProgress;
         if (isBedCatWanted) {
           bedCatDelayLeft -= deltaSeconds;
           if (bedCatDelayLeft <= 0) bedCatProgress = isCalm ? 1 : Math.min(1, bedCatProgress + deltaSeconds / bedCatDropSeconds);
         } else {
           bedCatProgress = isCalm ? 0 : Math.max(0, bedCatProgress - deltaSeconds / bedCatLeaveSeconds);
         }
+        if (bedCatProgress !== previousBedCatProgress) renderer.shadowMap.needsUpdate = true;
+        const wasBedCatVisible = bedCat.catRoot.visible;
         bedCat.catRoot.visible = bedCatProgress > 0;
+        // Skip the frame when the camera is parked and the bed is empty (one last frame clears him away as he leaves)
+        if (!isFlying && !bedCat.catRoot.visible && !wasBedCatVisible && !needsRender) {
+          if (isVisible) animationFrameId = requestAnimationFrame(renderFrame);
+          return;
+        }
+        needsRender = false;
         if (bedCat.catRoot.visible) {
           const breath = (Math.sin(now / 1000 * 1.7) + 1) / 2;
           bedCat.catRoot.position.set(bedCatPosition[0], bedCatPosition[1] + (1 - easeOut(bedCatProgress)) * bedCatDropHeight, bedCatPosition[2]);
@@ -228,7 +244,8 @@ export default function AboutRoomCanvas() {
         isRoomVisible = isVisible;
         if (isBedCatWanted) tellCornerCat(isVisible);
         cancelAnimationFrame(animationFrameId);
-        if (isVisible) { previousTime = performance.now(); animationFrameId = requestAnimationFrame(renderFrame); }
+        // Redraw once on the way back in, in case the browser threw the canvas away while it was off screen
+        if (isVisible) { needsRender = true; previousTime = performance.now(); animationFrameId = requestAnimationFrame(renderFrame); }
       });
       visibilityObserver.observe(roomElement);
 
